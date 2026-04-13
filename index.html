@@ -1,0 +1,2399 @@
+<!doctype html>
+<html lang="es" data-theme="catalina-dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pantalla Principal - M.V.C.G</title>
+
+  <style>
+    /* =========================================================
+       SISTEMA DE TEMAS (6 aspectos neutros y elegantes)
+       ========================================================= */
+    :root{
+      --bg1: #0b1020;
+      --bg2: #141b2e;
+      --bg3: #0b1020;
+
+      --bloom1: rgba(255, 99, 132, .22);
+      --bloom2: rgba(99, 102, 241, .22);
+      --bloom3: rgba(52, 211, 153, .18);
+
+      --glass: rgba(255,255,255,.14);
+      --glass2: rgba(255,255,255,.10);
+      --border: rgba(255,255,255,.22);
+      --shadow: rgba(0,0,0,.35);
+
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.56);
+
+      --dock: rgba(0,0,0,.22);
+      --dockBorder: rgba(255,255,255,.18);
+      --dockShadow: rgba(0,0,0,.40);
+
+      --accent: rgba(99, 102, 241, .95);
+      --good: rgba(52, 211, 153, .95);
+      --danger: rgba(251, 113, 133, .95);
+
+      --blur: 16px;
+      --radiusWindow: 22px;
+      --radiusCard: 18px;
+    }
+
+    html[data-theme="catalina-dark"]{
+      --bg1:#0b1020; --bg2:#141b2e; --bg3:#0b1020;
+      --bloom1: rgba(255, 99, 132, .22);
+      --bloom2: rgba(99, 102, 241, .22);
+      --bloom3: rgba(52, 211, 153, .18);
+      --glass: rgba(255,255,255,.14);
+      --glass2: rgba(255,255,255,.10);
+      --border: rgba(255,255,255,.22);
+      --text: rgba(255,255,255,.92);
+      --dock: rgba(0,0,0,.22);
+    }
+
+    html[data-theme="catalina-light"]{
+      --bg1:#dfe7ff; --bg2:#f7f8ff; --bg3:#dfe7ff;
+      --bloom1: rgba(255, 99, 132, .18);
+      --bloom2: rgba(99, 102, 241, .16);
+      --bloom3: rgba(52, 211, 153, .14);
+      --glass: rgba(255,255,255,.55);
+      --glass2: rgba(255,255,255,.38);
+      --border: rgba(0,0,0,.10);
+      --shadow: rgba(0,0,0,.18);
+      --text: rgba(15, 23, 42, .92);
+      --muted: rgba(15, 23, 42, .70);
+      --muted2: rgba(15, 23, 42, .55);
+      --dock: rgba(255,255,255,.55);
+      --dockBorder: rgba(0,0,0,.10);
+      --dockShadow: rgba(0,0,0,.18);
+    }
+
+    html[data-theme="ocean"]{
+      --bg1:#071428; --bg2:#0b244a; --bg3:#071428;
+      --bloom1: rgba(56, 189, 248, .18);
+      --bloom2: rgba(59, 130, 246, .20);
+      --bloom3: rgba(34, 211, 238, .14);
+      --accent: rgba(56, 189, 248, .95);
+      --glass: rgba(255,255,255,.13);
+      --dock: rgba(0,0,0,.22);
+    }
+
+    html[data-theme="forest"]{
+      --bg1:#071b16; --bg2:#0b2a22; --bg3:#071b16;
+      --bloom1: rgba(34, 197, 94, .18);
+      --bloom2: rgba(16, 185, 129, .18);
+      --bloom3: rgba(132, 204, 22, .12);
+      --accent: rgba(34, 197, 94, .90);
+      --glass: rgba(255,255,255,.13);
+    }
+
+    html[data-theme="sunrise"]{
+      --bg1:#1a1024; --bg2:#2a1636; --bg3:#0b1020;
+      --bloom1: rgba(251, 113, 133, .20);
+      --bloom2: rgba(245, 158, 11, .16);
+      --bloom3: rgba(99, 102, 241, .16);
+      --accent: rgba(245, 158, 11, .92);
+      --glass: rgba(255,255,255,.14);
+    }
+
+    html[data-theme="minimal-gray"]{
+      --bg1:#0b0f14; --bg2:#111827; --bg3:#0b0f14;
+      --bloom1: rgba(148, 163, 184, .14);
+      --bloom2: rgba(203, 213, 225, .10);
+      --bloom3: rgba(99, 102, 241, .10);
+      --accent: rgba(148, 163, 184, .95);
+      --glass: rgba(255,255,255,.12);
+    }
+
+    /* =========================================================
+       ESTILO GENERAL
+       ========================================================= */
+    *{ box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                   "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans";
+      color: var(--text);
+      overflow:hidden;
+
+      background:
+        radial-gradient(1200px 800px at 20% 20%, var(--bloom1), transparent 60%),
+        radial-gradient(900px 600px at 85% 25%, var(--bloom2), transparent 55%),
+        radial-gradient(900px 700px at 55% 80%, var(--bloom3), transparent 60%),
+        linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 40%, var(--bg3) 100%);
+    }
+
+    .overlay{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      background: radial-gradient(900px 500px at 50% 0%, rgba(255,255,255,.08), transparent 60%);
+    }
+
+    .wrap{
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 28px;
+      padding-bottom: 120px;
+    }
+
+    .window{
+      width: min(900px, 100%);
+      border-radius: var(--radiusWindow);
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--glass), var(--glass2));
+      box-shadow: 0 22px 60px var(--shadow);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      overflow:hidden;
+      position: relative;
+    }
+
+    .titlebar{
+      height: 52px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      padding: 0 16px;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      gap: 10px;
+    }
+    .dot{
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.15);
+      opacity:.95;
+    }
+    .red{ background:#ff5f57; }
+    .yellow{ background:#febc2e; }
+    .green{ background:#28c840; }
+
+    .content{
+      padding: 38px 26px 28px 26px;
+      text-align:center;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap: 16px;
+    }
+
+    .monogram{
+      font-weight: 850;
+      font-size: clamp(38px, 6vw, 64px);
+      letter-spacing: 3px;
+      line-height: 1;
+      text-shadow: 0 10px 26px rgba(0,0,0,.30);
+      user-select:none;
+    }
+
+    .phrase{
+      width: min(720px, 100%);
+      padding: 18px 18px;
+      border-radius: var(--radiusCard);
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    .phrase-label{
+      font-size: 12px;
+      color: var(--muted2);
+      letter-spacing:.35px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .phrase-text{
+      margin:0;
+      font-size: clamp(16px, 2.2vw, 20px);
+      line-height: 1.38;
+      font-weight: 650;
+    }
+
+    .footer{
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-top: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.10);
+      color: var(--muted);
+      font-size: 13px;
+      gap: 10px;
+      flex-wrap:wrap;
+      text-align:center;
+    }
+    .sep{ opacity:.45; }
+
+    /* =========================================================
+       DOCK ESTILO macOS
+       ========================================================= */
+    .dock-wrap{
+      position: fixed;
+      left: 0; right: 0; bottom: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 0 18px;
+      pointer-events:none;
+    }
+
+    .dock{
+      pointer-events:auto;
+      display:flex;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 20px;
+      background: var(--dock);
+      border: 1px solid var(--dockBorder);
+      box-shadow: 0 18px 50px var(--dockShadow);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      align-items:flex-end;
+    }
+
+    .dock-btn{
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.10);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition: transform .12s ease, background .2s ease, border-color .2s ease;
+      position: relative;
+      user-select:none;
+      color: var(--text);
+    }
+    .dock-btn:hover{
+      transform: translateY(-4px) scale(1.03);
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.22);
+    }
+    .dock-btn:active{
+      transform: translateY(-2px) scale(1.01);
+    }
+
+    .dock-btn svg{ width: 22px; height: 22px; opacity:.95; }
+
+    .tooltip{
+      position:absolute;
+      bottom: 56px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.18);
+      color: rgba(255,255,255,.92);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .15s ease;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .dock-btn:hover .tooltip{ opacity:1; }
+
+    /* =========================================================
+       MODALES (base)
+       ========================================================= */
+    .modal-backdrop{
+      position: fixed;
+      inset:0;
+      background: rgba(0,0,0,.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 22px;
+      z-index: 50;
+    }
+    .modal-backdrop.open{ display:flex; }
+
+    .modal{
+      width: min(860px, 100%);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.10));
+      box-shadow: 0 28px 70px rgba(0,0,0,.45);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      overflow:hidden;
+    }
+
+    .modal-head{
+      height: 54px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.10);
+      gap: 12px;
+    }
+
+    .modal-title{
+      font-size: 14px;
+      font-weight: 750;
+      letter-spacing:.2px;
+      color: rgba(255,255,255,.88);
+    }
+
+    .modal-body{
+      padding: 16px;
+      display:grid;
+      gap: 12px;
+      max-height: min(72vh, 760px);
+      overflow:auto;
+    }
+
+    .panel{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.10);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .panel h4{
+      margin:0 0 10px 0;
+      font-size: 13px;
+      color: rgba(255,255,255,.84);
+      letter-spacing:.2px;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items:end;
+    }
+    @media (max-width: 760px){
+      .row{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      font-size: 12px;
+      color: var(--muted);
+      display:block;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"], select{
+      width:100%;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.10);
+      color: var(--text);
+      outline:none;
+    }
+    input:focus, select:focus{
+      border-color: rgba(255,255,255,.30);
+    }
+
+    .range{
+      width:100%;
+      accent-color: rgba(255,255,255,.85);
+    }
+
+    .hint{
+      font-size: 12px;
+      color: var(--muted2);
+      margin-top: 6px;
+      line-height: 1.35;
+    }
+
+    .modal-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap: 10px;
+      padding: 0 16px 16px 16px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      color: rgba(255,255,255,.90);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .06s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.26);
+    }
+    .btn:active{ transform: scale(.99); }
+
+    .btn-primary{
+      background: rgba(99,102,241,.22);
+      border-color: rgba(99,102,241,.36);
+    }
+    .btn-primary:hover{
+      background: rgba(99,102,241,.28);
+      border-color: rgba(99,102,241,.50);
+    }
+
+    .btn-good{
+      background: rgba(52,211,153,.18);
+      border-color: rgba(52,211,153,.30);
+    }
+    .btn-good:hover{
+      background: rgba(52,211,153,.24);
+      border-color: rgba(52,211,153,.45);
+    }
+
+    .btn-danger{
+      background: rgba(251,113,133,.18);
+      border-color: rgba(251,113,133,.30);
+    }
+    .btn-danger:hover{
+      background: rgba(251,113,133,.24);
+      border-color: rgba(251,113,133,.45);
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      font-size: 12.5px;
+      color: rgba(255,255,255,.86);
+    }
+    .pill.negative{
+      background: rgba(251,113,133,.14);
+      border-color: rgba(251,113,133,.22);
+    }
+    .pill.positive{
+      background: rgba(52,211,153,.14);
+      border-color: rgba(52,211,153,.22);
+    }
+
+    .divider{
+      height: 1px;
+      background: rgba(255,255,255,.12);
+      margin: 10px 0;
+    }
+
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .table th, .table td{
+      padding: 10px 10px;
+      font-size: 12.5px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      text-align:left;
+      vertical-align: top;
+    }
+    .table th{
+      color: rgba(255,255,255,.82);
+      background: rgba(0,0,0,.10);
+      font-weight: 750;
+    }
+    .table tr:last-child td{ border-bottom: none; }
+
+    .inline-actions{
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .mini{
+      padding: 7px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+
+    /* Ajuste para tema claro */
+    html[data-theme="catalina-light"] .modal-title,
+    html[data-theme="catalina-light"] .panel h4{
+      color: rgba(15,23,42,.88);
+    }
+    html[data-theme="catalina-light"] .btn,
+    html[data-theme="catalina-light"] input,
+    html[data-theme="catalina-light"] select{
+      color: rgba(15,23,42,.92);
+    }
+    html[data-theme="catalina-light"] .modal-backdrop{
+      background: rgba(0,0,0,.30);
+    }
+    html[data-theme="catalina-light"] .table th{
+      color: rgba(15,23,42,.88);
+    }
+    html[data-theme="catalina-light"] .table td{
+      color: rgba(15,23,42,.88);
+    }
+    html[data-theme="catalina-light"] .pill{
+      color: rgba(15,23,42,.88);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="overlay"></div>
+
+  <div class="wrap">
+    <section class="window" role="application" aria-label="Pantalla principal">
+
+      <div class="titlebar" aria-hidden="true">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+      </div>
+
+      <div class="content">
+        <div class="monogram" id="monograma">M.V.C.G</div>
+
+        <div class="phrase" aria-live="polite">
+          <div class="phrase-label">Frase inspiradora del día</div>
+          <p class="phrase-text" id="fraseTexto">—</p>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <span id="fecha">—</span>
+        <span class="sep">|</span>
+        <span id="hora">—</span>
+      </footer>
+
+    </section>
+  </div>
+
+  <!-- DOCK -->
+  <div class="dock-wrap" aria-label="Dock">
+    <div class="dock" role="toolbar" aria-label="Dock de acciones">
+
+      <!-- Ajustes -->
+      <button class="dock-btn" id="dockAjustes" aria-label="Ajustes">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M19.4 15a7.9 7.9 0 0 0 .1-1l2-1.3-2-3.4-2.3.6a7.2 7.2 0 0 0-1.7-1l-.3-2.3H10.8l-.3 2.3a7.2 7.2 0 0 0-1.7 1l-2.3-.6-2 3.4 2 1.3a7.9 7.9 0 0 0 .1 1 7.9 7.9 0 0 0-.1 1l-2 1.3 2 3.4 2.3-.6a7.2 7.2 0 0 0 1.7 1l.3 2.3h4.4l.3-2.3a7.2 7.2 0 0 0 1.7-1l2.3.6 2-3.4-2-1.3a7.9 7.9 0 0 0-.1-1Z"
+                stroke="currentColor" stroke-width="1.2" opacity="0.95"/>
+        </svg>
+        <span class="tooltip">Ajustes</span>
+      </button>
+
+      <!-- Perfil -->
+      <button class="dock-btn" id="dockPerfil" aria-label="Perfil">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M20 20a8 8 0 0 0-16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="tooltip">Perfil</span>
+      </button>
+
+      <!-- Remesas -->
+      <button class="dock-btn" id="dockRemesas" aria-label="Remesas">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M7 5v14" stroke="currentColor" stroke-width="1.2" opacity=".8"/>
+        </svg>
+        <span class="tooltip">Remesas</span>
+      </button>
+
+      <!-- Pantalla completa -->
+      <button class="dock-btn" id="dockPantallaCompleta" aria-label="Pantalla completa">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="tooltip">Pantalla completa</span>
+      </button>
+
+      <!-- Otra frase -->
+      <button class="dock-btn" id="dockRefrescarFrase" aria-label="Otra frase">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M20 4v6h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="tooltip">Otra frase</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ===================== MODAL AJUSTES ===================== -->
+  <div class="modal-backdrop" id="backdropAjustes" role="dialog" aria-modal="true" aria-label="Ajustes">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Ajustes</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="dot red" title="Cerrar" style="cursor:pointer" id="xCerrarAjustes"></span>
+          <span class="dot yellow" style="opacity:.75"></span>
+          <span class="dot green" style="opacity:.75"></span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="panel">
+          <h4>Aspecto (elige 1 de 6 temas)</h4>
+          <div class="row">
+            <div>
+              <label for="selTema">Tema</label>
+              <select id="selTema">
+                <option value="catalina-dark">Catalina Oscuro</option>
+                <option value="catalina-light">Catalina Claro</option>
+                <option value="ocean">Océano</option>
+                <option value="forest">Bosque</option>
+                <option value="sunrise">Amanecer</option>
+                <option value="minimal-gray">Gris Minimal</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="rngBlur">Intensidad de vidrio (blur)</label>
+              <input id="rngBlur" class="range" type="range" min="8" max="24" value="16" />
+              <div class="hint">Más blur = más “vidrio”, menos blur = más “nítido”.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h4>Pantalla principal</h4>
+          <div class="row">
+            <div>
+              <label for="txtMonograma">Título (M.V.C.G)</label>
+              <input id="txtMonograma" type="text" value="M.V.C.G" />
+              <div class="hint">Se aplica al instante y se guarda automáticamente.</div>
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <div class="hint" style="padding-top:10px;">
+                Tip: Presiona <b>F11</b> para modo pantalla completa (según navegador).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="btnRestaurarAjustes">Restaurar</button>
+        <button class="btn btn-primary" id="btnCerrarAjustes">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL PERFIL ===================== -->
+  <div class="modal-backdrop" id="backdropPerfil" role="dialog" aria-modal="true" aria-label="Perfil">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Perfil</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="dot red" title="Cerrar" style="cursor:pointer" id="xCerrarPerfil"></span>
+          <span class="dot yellow" style="opacity:.75"></span>
+          <span class="dot green" style="opacity:.75"></span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="panel">
+          <h4>Datos del usuario</h4>
+          <div class="row">
+            <div>
+              <label for="perfilNombre">Nombre</label>
+              <input id="perfilNombre" type="text" placeholder="Ej. María López" />
+            </div>
+
+            <div>
+              <label for="perfilModulo">Número de módulo</label>
+              <input id="perfilModulo" type="text" placeholder="Ej. 12" />
+            </div>
+
+            <div>
+              <label for="perfilCodigo">Código de empleado</label>
+              <input id="perfilCodigo" type="text" placeholder="Ej. EMP-2045" />
+            </div>
+
+            <div>
+              <label>&nbsp;</label>
+              <div class="hint" style="padding-top:10px;">
+                ✔ Se guarda en este navegador (local).<br/>
+                ✔ No se muestra en pantalla principal.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="btnLimpiarPerfil">Limpiar</button>
+        <button class="btn btn-primary" id="btnCerrarPerfil">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL REMESAS ===================== -->
+  <div class="modal-backdrop" id="backdropRemesas" role="dialog" aria-modal="true" aria-label="Remesas">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Remesas</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="dot red" title="Cerrar" style="cursor:pointer" id="xCerrarRemesas"></span>
+          <span class="dot yellow" style="opacity:.75"></span>
+          <span class="dot green" style="opacity:.75"></span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="panel">
+          <h4>Datos principales</h4>
+          <div class="row">
+            <div>
+              <label for="remBanco">Banco</label>
+              <select id="remBanco">
+                <option value="">— Seleccionar —</option>
+                <option>INTERBANCO</option>
+                <option>PROMERICA</option>
+                <option>FICOHSA</option>
+                <option>BAM</option>
+                <option>G&amp;T</option>
+                <option>IMOBILIARIO</option>
+                <option>CHN</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="remIdBolsa">ID de bolsa</label>
+              <input id="remIdBolsa" type="text" placeholder="Ej. BOLSA-001234" />
+            </div>
+
+            <div>
+              <label for="remMontoTeorico">Monto teórico</label>
+              <input id="remMontoTeorico" type="text" inputmode="decimal" placeholder="Ej. 25,000.00" />
+            </div>
+
+            <div>
+              <label for="remDivisa">Divisa</label>
+              <select id="remDivisa">
+                <option value="GTQ">Quetzales (GTQ)</option>
+                <option value="USD">Dólares (USD)</option>
+                <option value="EUR">Euros (EUR)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <span class="pill" id="pillTeorico">Teórico: —</span>
+              <span class="pill" id="pillIngresado">Ingresado: —</span>
+              <span class="pill" id="pillDiferencia">Diferencia: —</span>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btn-good" id="btnAdminCheques">Administrar cheques</button>
+              <button class="btn btn-good" id="btnAdminEfectivo">Administrar billetes y monedas</button>
+            </div>
+          </div>
+
+          <div class="hint" style="margin-top:10px;">
+            La diferencia se calcula como: <b>Ingresado (efectivo + cheques) - Teórico</b>.
+          </div>
+        </div>
+
+        <div class="panel">
+          <h4>Resumen guardado (en esta remesa)</h4>
+          <div class="row">
+            <div>
+              <label>Cheques</label>
+              <div class="pill" id="resCheques">Total cheques: —</div>
+              <div class="hint" id="resChequesHint">0 cheques registrados.</div>
+            </div>
+            <div>
+              <label>Efectivo</label>
+              <div class="pill" id="resEfectivo">Total efectivo: —</div>
+              <div class="hint" id="resEfectivoHint">Sin conteo de denominaciones.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h4>Remesas guardadas</h4>
+          <div class="hint" style="margin-bottom:10px;">
+            Guarda una remesa y aparecerá aquí. Puedes cargar para editar o eliminar.
+          </div>
+
+          <table class="table" id="tablaRemesas">
+            <thead>
+              <tr>
+                <th>Fecha/Hora</th>
+                <th>Banco</th>
+                <th>ID Bolsa</th>
+                <th>Divisa</th>
+                <th>Teórico</th>
+                <th>Ingresado</th>
+                <th>Diferencia</th>
+                <th style="text-align:right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <div class="divider"></div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+            <button class="btn" id="btnNuevo">Nuevo</button>
+            <button class="btn btn-primary" id="btnGuardarRemesa">Guardar remesa</button>
+            <button class="btn btn-good" id="btnGenerarPDF">Generar PDF</button>
+          </div>
+
+          <div class="hint" id="draftHint" style="margin-top:10px;">
+            Auto-guardado: —
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btnCerrarRemesas">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL CHEQUES ===================== -->
+  <div class="modal-backdrop" id="backdropCheques" role="dialog" aria-modal="true" aria-label="Administrar cheques">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Administrar cheques</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="dot red" title="Cerrar" style="cursor:pointer" id="xCerrarCheques"></span>
+          <span class="dot yellow" style="opacity:.75"></span>
+          <span class="dot green" style="opacity:.75"></span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="panel">
+          <h4>Agregar / editar cheque</h4>
+          <div class="row">
+            <div>
+              <label for="chkBanco">Nombre de banco</label>
+              <input id="chkBanco" type="text" placeholder="Ej. BANCO X" />
+            </div>
+            <div>
+              <label for="chkNumero">Número de documento</label>
+              <input id="chkNumero" type="text" placeholder="Ej. 00012345" />
+            </div>
+            <div>
+              <label for="chkValor">Valor del documento</label>
+              <input id="chkValor" type="text" inputmode="decimal" placeholder="Ej. 1,250.00" />
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+                <button class="btn" id="btnChkNuevo">Nuevo</button>
+                <button class="btn btn-primary" id="btnChkGuardar">Guardar</button>
+              </div>
+            </div>
+          </div>
+          <div class="hint" id="chkModo">Modo: agregar</div>
+        </div>
+
+        <div class="panel">
+          <h4>Cheques registrados</h4>
+          <table class="table" id="tablaCheques">
+            <thead>
+              <tr>
+                <th>Banco</th>
+                <th>No. Doc</th>
+                <th>Valor</th>
+                <th style="text-align:right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btnCerrarCheques">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL EFECTIVO ===================== -->
+  <div class="modal-backdrop" id="backdropEfectivo" role="dialog" aria-modal="true" aria-label="Administrar billetes y monedas">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Administrar billetes y monedas</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="dot red" title="Cerrar" style="cursor:pointer" id="xCerrarEfectivo"></span>
+          <span class="dot yellow" style="opacity:.75"></span>
+          <span class="dot green" style="opacity:.75"></span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="panel">
+          <h4>Conteo por denominación</h4>
+          <div class="hint" id="efectivoHintTop">Divisa actual: —</div>
+          <div class="divider"></div>
+
+          <div id="efectivoContenedor"></div>
+
+          <div class="divider"></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between; align-items:center;">
+            <span class="pill" id="pillTotalEfectivoModal">Total efectivo: —</span>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btn-danger" id="btnEfectivoLimpiar">Limpiar</button>
+              <button class="btn btn-primary" id="btnEfectivoGuardar">Guardar</button>
+            </div>
+          </div>
+          <div class="hint">* El conteo se auto-guardará también como borrador mientras escribes.</div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btnCerrarEfectivo">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       FRASES (60)
+       ========================================================= */
+    const FRASES = [
+      "La confianza se construye con cada detalle bien hecho.",
+      "Hoy tu disciplina es el interés compuesto de tu futuro.",
+      "Atender con respeto es ganar clientes para toda la vida.",
+      "La precisión no es opcional: es tu sello profesional.",
+      "Hazlo simple, hazlo claro, hazlo correcto.",
+      "Tu actitud abre puertas que tu currículum no puede.",
+      "Un buen día empieza con una buena intención.",
+      "Cuando dudas, vuelve al principio: honestidad y orden.",
+      "La excelencia es una decisión diaria, no un accidente.",
+      "Sé constante: lo extraordinario nace de lo repetido.",
+      "Tu trabajo de hoy protege los sueños de muchas personas.",
+      "La calma también es productividad.",
+      "Primero la ética, luego la velocidad.",
+      "El servicio de calidad se nota en lo pequeño.",
+      "Cada operación bien hecha fortalece la reputación.",
+      "Tu mejor herramienta es la responsabilidad.",
+      "Haz lo correcto aunque nadie esté mirando.",
+      "La confianza del cliente vale más que cualquier atajo.",
+      "El orden reduce errores; el hábito crea orden.",
+      "La puntualidad es respeto en forma de tiempo.",
+      "No solo resuelvas: anticipa necesidades.",
+      "Escucha con atención, responde con claridad.",
+      "Un equipo fuerte se construye con comunicación y apoyo.",
+      "Tu consistencia inspira más que tus palabras.",
+      "Aprender todos los días te mantiene valioso.",
+      "La calidad no se negocia; se practica.",
+      "La seguridad es parte del servicio.",
+      "Si puedes medirlo, puedes mejorarlo.",
+      "La excelencia se ve en la última revisión.",
+      "Lo que haces hoy define la confianza de mañana.",
+      "Ser profesional es cuidar los detalles incluso con prisa.",
+      "Tu enfoque convierte lo difícil en posible.",
+      "Sé amable: la amabilidad también es estrategia.",
+      "El cliente recuerda cómo lo hiciste sentir.",
+      "Tu disciplina es tu libertad.",
+      "Haz tu mejor esfuerzo con lo que tienes hoy.",
+      "Confianza + claridad = servicio memorable.",
+      "La mejora continua gana a la perfección ocasional.",
+      "Trabaja con propósito: el propósito multiplica la energía.",
+      "Cuando tú creces, tu equipo crece contigo.",
+      "La transparencia genera tranquilidad.",
+      "La responsabilidad es la base de un gran profesional.",
+      "No te distraigas: tu enfoque es tu poder.",
+      "La excelencia es hacer bien lo correcto, siempre.",
+      "Cada dato correcto evita un problema grande.",
+      "Tu reputación se construye operación por operación.",
+      "Las metas se logran con hábitos, no con suerte.",
+      "El respeto al proceso evita errores costosos.",
+      "Sé paciente: la constancia vence a la urgencia.",
+      "Hoy puedes ser la diferencia en la vida de alguien.",
+      "Tu actitud es tu carta de presentación.",
+      "Hazlo con cuidado: el cuidado construye confianza.",
+      "El éxito es la suma de pequeñas decisiones correctas.",
+      "La claridad reduce fricción; la fricción reduce resultados.",
+      "Tu energía se nota: llévala con orgullo y calma.",
+      "Un paso a la vez, pero sin detenerte.",
+      "Los detalles son la firma del profesional.",
+      "Lo correcto primero: siempre.",
+      "La confianza del banco se protege con tu atención.",
+      "Eres más fuerte de lo que crees: actúa como tal."
+    ];
+
+    /* =========================================================
+       UTILIDADES (comas + parseo seguro)
+       ========================================================= */
+    const fmtFecha = new Intl.DateTimeFormat("es-GT", { weekday:"long", year:"numeric", month:"long", day:"2-digit" });
+    const fmtHora  = new Intl.DateTimeFormat("es-GT", { hour:"2-digit", minute:"2-digit", second:"2-digit" });
+    const fmtFechaHora = new Intl.DateTimeFormat("es-GT", {
+      year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", second:"2-digit"
+    });
+
+    function cap1(str){ return str.charAt(0).toUpperCase() + str.slice(1); }
+
+    function num(v){
+      if (v === "" || v === null || v === undefined) return 0;
+      const cleaned = String(v).replace(/,/g, "").trim();
+      const x = Number(cleaned);
+      return Number.isFinite(x) ? x : 0;
+    }
+
+    function formatWithCommas(value, decimals = 2){
+      const n = Number.isFinite(value) ? value : 0;
+      const fixed = n.toFixed(decimals);
+      const [intPart, decPart] = fixed.split(".");
+      const withCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return decPart !== undefined ? `${withCommas}.${decPart}` : withCommas;
+    }
+
+    const CURRENCY = {
+      GTQ: { symbol: "Q", name: "Quetzales" },
+      USD: { symbol: "$", name: "Dólares" },
+      EUR: { symbol: "€", name: "Euros" }
+    };
+
+    function money(value, divisa){
+      const s = CURRENCY[divisa]?.symbol ?? "";
+      const v = Number(value) || 0;
+      return `${s} ${formatWithCommas(v, 2)}`;
+    }
+
+    function formatInputMoney(el){
+      const raw = (el.value || "").trim();
+      if(raw === ""){
+        el.value = "";
+        return;
+      }
+      const v = num(raw);
+      el.value = formatWithCommas(v, 2);
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    /* =========================================================
+       ELEMENTOS PRINCIPALES
+       ========================================================= */
+    const elFecha = document.getElementById("fecha");
+    const elHora = document.getElementById("hora");
+    const elFraseTexto = document.getElementById("fraseTexto");
+    const elMonograma = document.getElementById("monograma");
+
+    // Dock
+    const dockAjustes = document.getElementById("dockAjustes");
+    const dockPerfil = document.getElementById("dockPerfil");
+    const dockRemesas = document.getElementById("dockRemesas");
+    const dockPantallaCompleta = document.getElementById("dockPantallaCompleta");
+    const dockRefrescarFrase = document.getElementById("dockRefrescarFrase");
+
+    // Backdrops
+    const backdropAjustes = document.getElementById("backdropAjustes");
+    const backdropPerfil = document.getElementById("backdropPerfil");
+    const backdropRemesas = document.getElementById("backdropRemesas");
+    const backdropCheques = document.getElementById("backdropCheques");
+    const backdropEfectivo = document.getElementById("backdropEfectivo");
+
+    /* =========================================================
+       AJUSTES
+       ========================================================= */
+    const selTema = document.getElementById("selTema");
+    const rngBlur = document.getElementById("rngBlur");
+    const txtMonograma = document.getElementById("txtMonograma");
+    const btnCerrarAjustes = document.getElementById("btnCerrarAjustes");
+    const btnRestaurarAjustes = document.getElementById("btnRestaurarAjustes");
+    const xCerrarAjustes = document.getElementById("xCerrarAjustes");
+
+    const DEFAULTS = { theme:"catalina-dark", blur:16, monogram:"M.V.C.G" };
+
+    function aplicarTema(theme){
+      document.documentElement.setAttribute("data-theme", theme);
+      selTema.value = theme;
+      localStorage.setItem("ui_theme", theme);
+    }
+    function aplicarBlur(blur){
+      document.documentElement.style.setProperty("--blur", `${blur}px`);
+      rngBlur.value = String(blur);
+      localStorage.setItem("ui_blur", String(blur));
+    }
+    function aplicarMonograma(texto){
+      const limpio = (texto ?? "").trim() || DEFAULTS.monogram;
+      elMonograma.textContent = limpio;
+      txtMonograma.value = limpio;
+      localStorage.setItem("ui_monogram", limpio);
+    }
+    function cargarAjustes(){
+      const theme = localStorage.getItem("ui_theme") || DEFAULTS.theme;
+      const blur = Number(localStorage.getItem("ui_blur"));
+      const monogram = localStorage.getItem("ui_monogram") || DEFAULTS.monogram;
+      aplicarTema(theme);
+      aplicarBlur(Number.isFinite(blur) ? blur : DEFAULTS.blur);
+      aplicarMonograma(monogram);
+    }
+    function restaurarAjustes(){
+      localStorage.setItem("ui_theme", DEFAULTS.theme);
+      localStorage.setItem("ui_blur", String(DEFAULTS.blur));
+      localStorage.setItem("ui_monogram", DEFAULTS.monogram);
+      cargarAjustes();
+    }
+
+    /* =========================================================
+       PERFIL
+       ========================================================= */
+    const perfilNombre = document.getElementById("perfilNombre");
+    const perfilModulo = document.getElementById("perfilModulo");
+    const perfilCodigo = document.getElementById("perfilCodigo");
+    const btnCerrarPerfil = document.getElementById("btnCerrarPerfil");
+    const btnLimpiarPerfil = document.getElementById("btnLimpiarPerfil");
+    const xCerrarPerfil = document.getElementById("xCerrarPerfil");
+
+    const PROFILE_KEYS = { nombre:"perfil_nombre", modulo:"perfil_modulo", codigo:"perfil_codigo" };
+
+    function cargarPerfil(){
+      perfilNombre.value = localStorage.getItem(PROFILE_KEYS.nombre) || "";
+      perfilModulo.value = localStorage.getItem(PROFILE_KEYS.modulo) || "";
+      perfilCodigo.value = localStorage.getItem(PROFILE_KEYS.codigo) || "";
+    }
+    function guardarPerfil(){
+      localStorage.setItem(PROFILE_KEYS.nombre, (perfilNombre.value||"").trim());
+      localStorage.setItem(PROFILE_KEYS.modulo, (perfilModulo.value||"").trim());
+      localStorage.setItem(PROFILE_KEYS.codigo, (perfilCodigo.value||"").trim());
+    }
+    function limpiarPerfil(){
+      perfilNombre.value = "";
+      perfilModulo.value = "";
+      perfilCodigo.value = "";
+      guardarPerfil();
+    }
+    function getProfileSnapshot(){
+      return {
+        nombre: (localStorage.getItem(PROFILE_KEYS.nombre) || "").trim(),
+        modulo: (localStorage.getItem(PROFILE_KEYS.modulo) || "").trim(),
+        codigo: (localStorage.getItem(PROFILE_KEYS.codigo) || "").trim()
+      };
+    }
+
+    /* =========================================================
+       REMESAS - UI
+       ========================================================= */
+    const remBanco = document.getElementById("remBanco");
+    const remIdBolsa = document.getElementById("remIdBolsa");
+    const remMontoTeorico = document.getElementById("remMontoTeorico");
+    const remDivisa = document.getElementById("remDivisa");
+
+    const pillTeorico = document.getElementById("pillTeorico");
+    const pillIngresado = document.getElementById("pillIngresado");
+    const pillDiferencia = document.getElementById("pillDiferencia");
+
+    const resCheques = document.getElementById("resCheques");
+    const resChequesHint = document.getElementById("resChequesHint");
+    const resEfectivo = document.getElementById("resEfectivo");
+    const resEfectivoHint = document.getElementById("resEfectivoHint");
+
+    const btnAdminCheques = document.getElementById("btnAdminCheques");
+    const btnAdminEfectivo = document.getElementById("btnAdminEfectivo");
+
+    const tablaRemesas = document.getElementById("tablaRemesas").querySelector("tbody");
+    const btnGuardarRemesa = document.getElementById("btnGuardarRemesa");
+    const btnGenerarPDF = document.getElementById("btnGenerarPDF");
+    const btnNuevo = document.getElementById("btnNuevo");
+
+    const btnCerrarRemesas = document.getElementById("btnCerrarRemesas");
+    const xCerrarRemesas = document.getElementById("xCerrarRemesas");
+
+    const draftHint = document.getElementById("draftHint");
+
+    // Cheques modal
+    const chkBanco = document.getElementById("chkBanco");
+    const chkNumero = document.getElementById("chkNumero");
+    const chkValor = document.getElementById("chkValor");
+    const btnChkNuevo = document.getElementById("btnChkNuevo");
+    const btnChkGuardar = document.getElementById("btnChkGuardar");
+    const tablaCheques = document.getElementById("tablaCheques").querySelector("tbody");
+    const chkModo = document.getElementById("chkModo");
+    const btnCerrarCheques = document.getElementById("btnCerrarCheques");
+    const xCerrarCheques = document.getElementById("xCerrarCheques");
+
+    // Efectivo modal
+    const efectivoHintTop = document.getElementById("efectivoHintTop");
+    const efectivoContenedor = document.getElementById("efectivoContenedor");
+    const pillTotalEfectivoModal = document.getElementById("pillTotalEfectivoModal");
+    const btnEfectivoLimpiar = document.getElementById("btnEfectivoLimpiar");
+    const btnEfectivoGuardar = document.getElementById("btnEfectivoGuardar");
+    const btnCerrarEfectivo = document.getElementById("btnCerrarEfectivo");
+    const xCerrarEfectivo = document.getElementById("xCerrarEfectivo");
+
+    /* =========================================================
+       STORAGE
+       ========================================================= */
+    const REMESAS_KEY = "remesas_lista_v3";
+    const DRAFT_KEY  = "remesas_draft_v3";
+
+    /* =========================================================
+       DENOMINACIONES
+       ========================================================= */
+    const DENOMS = {
+      GTQ: { billetes: [200,100,50,20,10,5,1], monedas: [1,0.50,0.25,0.10,0.05,0.01] },
+      USD: { billetes: [100,50,20,10,5,2,1], monedas: [] },
+      EUR: { billetes: [500,200,100,50,20,10,5,1], monedas: [] }
+    };
+
+    /* =========================================================
+       ESTADO
+       ========================================================= */
+    let current = { cheques: [], efectivo: {} };
+    let editingRemesaIndex = null;
+    let editingChequeIndex = null;
+    let efectivoDraft = {};
+    let isDirty = false;
+
+    let draftTimer = null;
+    function markDirty(){
+      isDirty = true;
+      scheduleDraftSave();
+    }
+    function clearDirty(){
+      isDirty = false;
+      updateDraftHint();
+    }
+    function scheduleDraftSave(){
+      clearTimeout(draftTimer);
+      draftTimer = setTimeout(()=> {
+        saveDraft();
+      }, 350);
+    }
+
+    function updateDraftHint(ts){
+      if(!draftHint) return;
+      if(!isDirty){
+        draftHint.textContent = "Auto-guardado: sin cambios pendientes.";
+      }else{
+        const when = ts ? ts : new Date();
+        draftHint.textContent = `Auto-guardado: borrador guardado (${fmtFechaHora.format(when)}).`;
+      }
+    }
+
+    function loadRemesas(){
+      try{ return JSON.parse(localStorage.getItem(REMESAS_KEY) || "[]"); }
+      catch{ return []; }
+    }
+    function saveRemesas(list){
+      localStorage.setItem(REMESAS_KEY, JSON.stringify(list));
+    }
+
+    /* =========================================================
+       TOTALES
+       ========================================================= */
+    function totalCheques(){
+      return current.cheques.reduce((acc,c)=> acc + num(c.valor), 0);
+    }
+    function totalEfectivo(){
+      let t = 0;
+      for(const [den, qty] of Object.entries(current.efectivo || {})){
+        t += Number(den) * num(qty);
+      }
+      return t;
+    }
+    function totalIngresado(){
+      return totalCheques() + totalEfectivo();
+    }
+
+    function updatePills(){
+      const div = remDivisa.value;
+      const teor = num(remMontoTeorico.value);
+      const ing = totalIngresado();
+      const dif = ing - teor;
+
+      pillTeorico.textContent = `Teórico: ${money(teor, div)}`;
+      pillIngresado.textContent = `Ingresado: ${money(ing, div)}`;
+
+      pillDiferencia.classList.remove("negative","positive");
+      if(dif < -0.00001) pillDiferencia.classList.add("negative");
+      if(dif >  0.00001) pillDiferencia.classList.add("positive");
+      pillDiferencia.textContent = `Diferencia: ${money(dif, div)}`;
+
+      resCheques.textContent = `Total cheques: ${money(totalCheques(), div)}`;
+      resChequesHint.textContent = current.cheques.length ? `${current.cheques.length} cheque(s) registrados.` : "0 cheques registrados.";
+      resEfectivo.textContent = `Total efectivo: ${money(totalEfectivo(), div)}`;
+      resEfectivoHint.textContent = Object.keys(current.efectivo||{}).length ? "Conteo por denominación guardado." : "Sin conteo de denominaciones.";
+    }
+
+    /* =========================================================
+       BORRADOR (AUTO-GUARDADO)
+       ========================================================= */
+    function getDraftObject(){
+      return {
+        savedAt: new Date().toISOString(),
+        banco: remBanco.value || "",
+        divisa: remDivisa.value || "GTQ",
+        idBolsa: remIdBolsa.value || "",
+        montoTeorico: remMontoTeorico.value || "",
+        current: structuredClone(current)
+      };
+    }
+
+    function saveDraft(){
+      if(!isDirty){
+        updateDraftHint();
+        return;
+      }
+      try{
+        const d = getDraftObject();
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+        updateDraftHint(new Date(d.savedAt));
+      }catch{}
+    }
+
+    function clearDraft(){
+      localStorage.removeItem(DRAFT_KEY);
+    }
+
+    function loadDraft(){
+      try{
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if(!raw) return null;
+        return JSON.parse(raw);
+      }catch{
+        return null;
+      }
+    }
+
+    function restoreDraftIfAny(){
+      const d = loadDraft();
+      if(!d) return;
+
+      const hasContent =
+        (d.idBolsa && d.idBolsa.trim() !== "") ||
+        (d.montoTeorico && d.montoTeorico.trim() !== "") ||
+        (d.current && ((d.current.cheques||[]).length > 0 || Object.keys(d.current.efectivo||{}).length > 0));
+
+      if(!hasContent) return;
+
+      remBanco.value = d.banco || "";
+      remDivisa.value = d.divisa || "GTQ";
+      remIdBolsa.value = d.idBolsa || "";
+      remMontoTeorico.value = d.montoTeorico || "";
+
+      current = d.current ? structuredClone(d.current) : {cheques:[], efectivo:{}};
+
+      renderChequesTable();
+      updatePills();
+
+      isDirty = true;
+      updateDraftHint(d.savedAt ? new Date(d.savedAt) : new Date());
+    }
+
+    /* =========================================================
+       VALIDACIÓN / GUARDADO REMESA
+       ========================================================= */
+    function validateRemesa(){
+      const banco = remBanco.value.trim();
+      const id = remIdBolsa.value.trim();
+      if(!banco) return "Selecciona un banco.";
+      if(!id) return "Ingresa el ID de bolsa.";
+      if(num(remMontoTeorico.value) <= 0) return "Ingresa un monto teórico mayor a 0.";
+      return "";
+    }
+
+    function currentRemesaObject(){
+      const div = remDivisa.value;
+      const teor = num(remMontoTeorico.value);
+      const ing = totalIngresado();
+      const dif = ing - teor;
+      const now = new Date();
+
+      return {
+        timestamp: now.toISOString(),
+        fechaHora: fmtFechaHora.format(now),
+        banco: remBanco.value.trim(),
+        idBolsa: remIdBolsa.value.trim(),
+        divisa: div,
+        montoTeorico: teor,
+        totalCheques: totalCheques(),
+        totalEfectivo: totalEfectivo(),
+        totalIngresado: ing,
+        diferencia: dif,
+        cheques: structuredClone(current.cheques),
+        efectivo: structuredClone(current.efectivo),
+        perfil: getProfileSnapshot()
+      };
+    }
+
+    function guardarRemesa(){
+      const err = validateRemesa();
+      if(err){ alert(err); return; }
+
+      formatInputMoney(remMontoTeorico);
+
+      const list = loadRemesas();
+      const obj = currentRemesaObject();
+
+      if(editingRemesaIndex !== null && list[editingRemesaIndex]){
+        list[editingRemesaIndex] = obj;
+      }else{
+        list.unshift(obj);
+      }
+      saveRemesas(list);
+      renderRemesasTable();
+
+      // ✅ limpiar pero conservar banco/divisa
+      const bancoKeep = remBanco.value;
+      const divisaKeep = remDivisa.value;
+
+      remIdBolsa.value = "";
+      remMontoTeorico.value = "";
+      current.cheques = [];
+      current.efectivo = {};
+      editingRemesaIndex = null;
+      editingChequeIndex = null;
+      efectivoDraft = {};
+
+      remBanco.value = bancoKeep;
+      remDivisa.value = divisaKeep;
+
+      renderChequesTable();
+      updatePills();
+
+      clearDraft();
+      clearDirty();
+
+      alert("Remesa guardada.");
+    }
+
+    function renderRemesasTable(){
+      const list = loadRemesas();
+      tablaRemesas.innerHTML = "";
+
+      if(list.length === 0){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="8" style="color: rgba(255,255,255,.70);">No hay remesas guardadas.</td>`;
+        tablaRemesas.appendChild(tr);
+        return;
+      }
+
+      for(let i=0;i<list.length;i++){
+        const r = list[i];
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.fechaHora || ""}</td>
+          <td>${escapeHtml(r.banco || "")}</td>
+          <td>${escapeHtml(r.idBolsa || "")}</td>
+          <td>${escapeHtml(r.divisa || "")}</td>
+          <td>${money(Number(r.montoTeorico)||0, r.divisa)}</td>
+          <td>${money(Number(r.totalIngresado)||0, r.divisa)}</td>
+          <td>${money(Number(r.diferencia)||0, r.divisa)}</td>
+          <td style="text-align:right;">
+            <div class="inline-actions">
+              <button class="btn mini" data-act="load" data-i="${i}">Cargar</button>
+              <button class="btn mini btn-danger" data-act="del" data-i="${i}">Eliminar</button>
+            </div>
+          </td>
+        `;
+        tablaRemesas.appendChild(tr);
+      }
+    }
+
+    function cargarRemesa(i){
+      const list = loadRemesas();
+      const r = list[i];
+      if(!r) return;
+
+      remBanco.value = r.banco || "";
+      remIdBolsa.value = r.idBolsa || "";
+      remDivisa.value = r.divisa || "GTQ";
+      remMontoTeorico.value = (r.montoTeorico != null) ? formatWithCommas(Number(r.montoTeorico), 2) : "";
+
+      current.cheques = Array.isArray(r.cheques) ? structuredClone(r.cheques) : [];
+      current.efectivo = r.efectivo ? structuredClone(r.efectivo) : {};
+      editingRemesaIndex = i;
+
+      renderChequesTable();
+      updatePills();
+
+      markDirty();
+      alert("Remesa cargada para edición.");
+    }
+
+    function eliminarRemesa(i){
+      const list = loadRemesas();
+      if(!list[i]) return;
+      if(!confirm("¿Eliminar esta remesa?")) return;
+      list.splice(i,1);
+      saveRemesas(list);
+      renderRemesasTable();
+    }
+
+    /* =========================================================
+       CHEQUES
+       ========================================================= */
+    function resetChequeForm(){
+      chkBanco.value = "";
+      chkNumero.value = "";
+      chkValor.value = "";
+      editingChequeIndex = null;
+      chkModo.textContent = "Modo: agregar";
+    }
+
+    function validateCheque(){
+      const b = chkBanco.value.trim();
+      const n = chkNumero.value.trim();
+      const v = num(chkValor.value);
+      if(!b) return "Ingresa el nombre del banco del cheque.";
+      if(!n) return "Ingresa el número de documento.";
+      if(v <= 0) return "Ingresa un valor mayor a 0.";
+      return "";
+    }
+
+    function guardarCheque(){
+      const err = validateCheque();
+      if(err){ alert(err); return; }
+
+      formatInputMoney(chkValor);
+
+      const obj = {
+        banco: chkBanco.value.trim(),
+        numero: chkNumero.value.trim(),
+        valor: num(chkValor.value)
+      };
+
+      if(editingChequeIndex !== null && current.cheques[editingChequeIndex]){
+        current.cheques[editingChequeIndex] = obj;
+      }else{
+        current.cheques.push(obj);
+      }
+      resetChequeForm();
+      renderChequesTable();
+      updatePills();
+
+      markDirty();
+    }
+
+    function renderChequesTable(){
+      tablaCheques.innerHTML = "";
+      const div = remDivisa.value;
+
+      if(current.cheques.length === 0){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="4" style="color: rgba(255,255,255,.70);">No hay cheques.</td>`;
+        tablaCheques.appendChild(tr);
+        return;
+      }
+
+      current.cheques.forEach((c, idx)=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(c.banco || "")}</td>
+          <td>${escapeHtml(c.numero || "")}</td>
+          <td>${money(Number(c.valor)||0, div)}</td>
+          <td style="text-align:right;">
+            <div class="inline-actions">
+              <button class="btn mini" data-act="loadChk" data-i="${idx}">Cargar</button>
+              <button class="btn mini btn-danger" data-act="delChk" data-i="${idx}">Eliminar</button>
+            </div>
+          </td>
+        `;
+        tablaCheques.appendChild(tr);
+      });
+    }
+
+    function cargarCheque(idx){
+      const c = current.cheques[idx];
+      if(!c) return;
+      chkBanco.value = c.banco || "";
+      chkNumero.value = c.numero || "";
+      chkValor.value = (c.valor != null) ? formatWithCommas(Number(c.valor), 2) : "";
+      editingChequeIndex = idx;
+      chkModo.textContent = "Modo: editar";
+    }
+
+    function eliminarCheque(idx){
+      if(!current.cheques[idx]) return;
+      if(!confirm("¿Eliminar este cheque?")) return;
+      current.cheques.splice(idx,1);
+      renderChequesTable();
+      updatePills();
+
+      markDirty();
+    }
+
+    /* =========================================================
+       EFECTIVO
+       ========================================================= */
+    function buildEfectivoUI(){
+      const div = remDivisa.value;
+      const d = DENOMS[div];
+      efectivoDraft = structuredClone(current.efectivo || {});
+      efectivoHintTop.textContent = `Divisa actual: ${CURRENCY[div].name} (${div})`;
+
+      efectivoContenedor.innerHTML = "";
+      const blocks = [];
+
+      blocks.push(makeDenomBlock("Billetes", d.billetes, div));
+      if(d.monedas && d.monedas.length){
+        blocks.push(makeDenomBlock("Monedas", d.monedas, div));
+      }
+
+      blocks.forEach(b => efectivoContenedor.appendChild(b));
+      updateTotalEfectivoModal();
+    }
+
+    function makeDenomBlock(title, denoms, div){
+      const panel = document.createElement("div");
+      panel.className = "panel";
+      panel.innerHTML = `<h4>${title}</h4>`;
+
+      const table = document.createElement("table");
+      table.className = "table";
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Denom</th>
+            <th>Pzs</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      `;
+      const tbody = table.querySelector("tbody");
+
+      denoms.forEach(den=>{
+        const key = String(den);
+        const qty = num(efectivoDraft[key] ?? 0);
+        const displayQty = qty > 0 ? String(qty) : "";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${den}</td>
+          <td>
+            <input type="text" inputmode="numeric" value="${displayQty}" data-den="${key}" class="efQty" style="max-width:140px;" />
+          </td>
+          <td class="efSub" data-sub="${key}">${money(den*qty, div)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      panel.appendChild(table);
+      return panel;
+    }
+
+    function updateTotalEfectivoModal(){
+      const div = remDivisa.value;
+      let t = 0;
+      for(const [den, qty] of Object.entries(efectivoDraft || {})){
+        t += Number(den) * num(qty);
+      }
+      pillTotalEfectivoModal.textContent = `Total efectivo: ${money(t, div)}`;
+    }
+
+    function bindEfectivoInputs(){
+      efectivoContenedor.addEventListener("input", (e)=>{
+        const inp = e.target;
+        if(!(inp && inp.classList.contains("efQty"))) return;
+
+        const den = inp.getAttribute("data-den");
+        const raw = String(inp.value || "").replace(/[^\d]/g, "");
+        const div = remDivisa.value;
+
+        if(raw === ""){
+          inp.value = "";
+          delete efectivoDraft[den];
+        }else{
+          const qty = Math.max(0, Math.floor(Number(raw)));
+          inp.value = String(qty);
+          efectivoDraft[den] = qty;
+        }
+
+        const sub = document.querySelector(`.efSub[data-sub="${CSS.escape(den)}"]`);
+        const qtyNow = num(efectivoDraft[den] ?? 0);
+        if(sub) sub.textContent = money(Number(den) * qtyNow, div);
+
+        updateTotalEfectivoModal();
+
+        markDirty();
+        scheduleDraftSave();
+      });
+    }
+
+    function limpiarEfectivoDraft(){
+      efectivoDraft = {};
+      buildEfectivoUI();
+      markDirty();
+    }
+
+    function guardarEfectivo(){
+      const cleaned = {};
+      for(const [den, qty] of Object.entries(efectivoDraft || {})){
+        const q = Math.max(0, Math.floor(num(qty)));
+        if(q > 0) cleaned[den] = q;
+      }
+      current.efectivo = cleaned;
+      updatePills();
+
+      markDirty();
+      alert("Efectivo guardado.");
+    }
+
+    /* =========================================================
+       PDF/IMPRESIÓN (ULTRA compacto y profesional)
+       - 6 etiquetas por hoja carta
+       - B/N, tablas finas y legibles
+       - Efectivo detallado: Billetes vs Monedas
+       ========================================================= */
+    const CODE39 = {
+      "0":"nnnwwnwnn","1":"wnnwnnnnw","2":"nnwwnnnnw","3":"wnwwnnnnn","4":"nnnwwnnnw",
+      "5":"wnnwwnnnn","6":"nnwwwnnnn","7":"nnnwnnwnw","8":"wnnwnnwnn","9":"nnwwnnwnn",
+      "A":"wnnnnwnnw","B":"nnwnnwnnw","C":"wnwnnwnnn","D":"nnnnwwnnw","E":"wnnnwwnnn",
+      "F":"nnwnwwnnn","G":"nnnnnwwnw","H":"wnnnnwwnn","I":"nnwnnwwnn","J":"nnnnwwwnn",
+      "K":"wnnnnnnww","L":"nnwnnnnww","M":"wnwnnnnwn","N":"nnnnwnnww","O":"wnnnwnnwn",
+      "P":"nnwnwnnwn","Q":"nnnnnnwww","R":"wnnnnnwwn","S":"nnwnnnwwn","T":"nnnnwnwwn",
+      "U":"wwnnnnnnw","V":"nwwnnnnnw","W":"wwwnnnnnn","X":"nwnnwnnnw","Y":"wwnnwnnnn",
+      "Z":"nwwnwnnnn","-":"nwnnnnwnw",".":"wwnnnnwnn"," ":"nwwnnnwnn","$":"nwnwnwnnn",
+      "/":"nwnwnnnwn","+":"nwnnnwnwn","%":"nnnwnwnwn","*":"nwnnwnwnn"
+    };
+
+    function sanitizeCode39(text){
+      const up = (text||"").toUpperCase();
+      const allowed = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%";
+      let out = "";
+      for(const ch of up){
+        if(allowed.includes(ch)) out += ch;
+      }
+      return out;
+    }
+
+    function estimateCode39Width(s, narrow, wide, gap){
+      let w = 0;
+      for(const ch of s){
+        const pat = CODE39[ch];
+        if(!pat) continue;
+        for(const c of pat){
+          w += (c === "w") ? wide : narrow;
+        }
+        w += gap;
+      }
+      return Math.max(10, w);
+    }
+
+    function code39ToSVG(text, height=24, narrow=2, wide=5){
+      const s = "*" + text + "*";
+      const gap = narrow;
+
+      let x = 0;
+      const parts = [];
+      const totalWidth = estimateCode39Width(s, narrow, wide, gap);
+      parts.push(`<rect x="0" y="0" width="${totalWidth}" height="${height}" fill="#fff"/>`);
+
+      for(let i=0;i<s.length;i++){
+        const ch = s[i];
+        const pat = CODE39[ch];
+        if(!pat) continue;
+
+        for(let j=0;j<pat.length;j++){
+          const isBar = (j % 2 === 0);
+          const w = (pat[j] === "w") ? wide : narrow;
+          if(isBar){
+            parts.push(`<rect x="${x}" y="0" width="${w}" height="${height}" fill="#000"/>`);
+          }
+          x += w;
+        }
+        x += gap;
+      }
+
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${height}" viewBox="0 0 ${totalWidth} ${height}">${parts.join("")}</svg>`;
+    }
+
+    function generarImpresionPDF(){
+      const list = loadRemesas();
+      if(list.length === 0){
+        alert("No hay remesas guardadas para generar PDF.");
+        return;
+      }
+
+      const html = buildPrintHTML(list);
+      const w = window.open("", "_blank");
+      if(!w){
+        alert("El navegador bloqueó la ventana emergente. Permite pop-ups para generar el PDF.");
+        return;
+      }
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      w.focus();
+    }
+
+    function chunkPages(allLabelsHTML, perPage){
+      const parts = allLabelsHTML.split("<!--LABEL-->").filter(Boolean);
+      let out = "";
+      for(let i=0;i<parts.length;i += perPage){
+        const slice = parts.slice(i, i+perPage).join("");
+        out += `<section class="page">${slice}</section>`;
+      }
+      return out;
+    }
+
+    function buildPrintHTML(list){
+      const labels = list.map((r, idx)=> printLabelHTML(r, idx)).join("");
+
+      return `
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Remesas - Etiquetas</title>
+<style>
+  @page { size: Letter; margin: 5mm; }
+  body{ margin:0; font-family: Arial, Helvetica, sans-serif; color:#000; background:#fff; }
+
+  /* 6 etiquetas por hoja: 2 columnas x 3 filas */
+  .page{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 4mm;
+    break-after: page;
+  }
+
+  /* Etiqueta compacta y profesional (B/N) */
+  .label{
+    border: 1px solid #000;
+    border-radius: 2mm;
+    padding: 2.6mm;
+    display:flex;
+    flex-direction:column;
+    gap: 1.8mm;
+    min-height: 66mm;
+  }
+
+  .topline{
+    display:flex;
+    justify-content:space-between;
+    gap: 3mm;
+    font-size: 7.2pt;
+    font-weight: 800;
+    letter-spacing: .2px;
+  }
+  .subline{
+    display:flex;
+    justify-content:space-between;
+    gap: 3mm;
+    font-size: 6.6pt;
+  }
+
+  .kpi{
+    width:100%;
+    border-collapse: collapse;
+    font-size: 6.6pt;
+  }
+  .kpi th, .kpi td{
+    border: 1px solid #000;
+    padding: 0.9mm 1.2mm;
+    vertical-align: top;
+  }
+  .kpi th{
+    background:#efefef;
+    font-weight: 800;
+    width: 34%;
+  }
+  .kpi td b{ font-weight: 900; }
+
+  .two{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.2mm;
+  }
+
+  .sectionTitle{
+    font-size: 6.6pt;
+    font-weight: 900;
+    margin: 0 0 .8mm 0;
+    letter-spacing: .2px;
+  }
+
+  table.tbl{
+    width:100%;
+    border-collapse: collapse;
+    font-size: 6.2pt;
+  }
+  table.tbl th, table.tbl td{
+    border: 1px solid #000;
+    padding: 0.7mm 1.0mm;
+    vertical-align: top;
+  }
+  table.tbl th{
+    background:#f3f3f3;
+    font-weight: 800;
+  }
+
+  .right{ text-align:right; }
+  .mono{ font-family: "Courier New", Courier, monospace; font-size: 6.4pt; }
+  .note{ font-size: 6.2pt; line-height: 1.1; }
+
+  .barcode{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding-top: .6mm;
+  }
+  .barcode-id{
+    text-align:center;
+    font-size: 6.6pt;
+    margin-top: .4mm;
+    letter-spacing: .6px;
+    font-weight: 800;
+  }
+  .diff{ font-weight: 900; }
+
+  .cut{
+    margin-top:auto;
+    font-size:6pt;
+    text-align:right;
+  }
+
+  .actions{
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    display:flex;
+    gap: 8px;
+  }
+  .btn{
+    border:1px solid #000;
+    background:#fff;
+    padding: 6px 10px;
+    cursor:pointer;
+    font-size: 12px;
+  }
+  @media print{ .actions{ display:none; } }
+</style>
+</head>
+<body>
+  <div class="actions">
+    <button class="btn" onclick="window.print()">Imprimir / Guardar como PDF</button>
+    <button class="btn" onclick="window.close()">Cerrar</button>
+  </div>
+
+  ${chunkPages(labels, 6)}
+</body>
+</html>`;
+    }
+
+    function printLabelHTML(r, idx){
+      const div = r.divisa || "GTQ";
+      const symb = (CURRENCY[div]?.symbol || "");
+      const perfil = r.perfil || {};
+      const fechaHora = r.fechaHora || "";
+      const banco = r.banco || "";
+      const id = r.idBolsa || "";
+      const teor = Number(r.montoTeorico)||0;
+      const ing = Number(r.totalIngresado)||0;
+      const dif = Number(r.diferencia)||0;
+
+      const efectivoObj = r.efectivo || {};
+      const cashInfo = splitCashByType(efectivoObj, div);
+
+      const efectivoRows = buildEfectivoRowsForPrint(cashInfo.rows, div);
+      const chequesRows  = buildChequesRowsForPrint(Array.isArray(r.cheques) ? r.cheques : [], div);
+
+      const code39Text = sanitizeCode39(id);
+      const barcodeSvg = code39Text ? code39ToSVG(code39Text, 24, 2, 5) : "";
+
+      return `<!--LABEL-->
+<div class="label">
+  <div class="topline">
+    <div>${escapeHtml(banco)}</div>
+    <div>${escapeHtml(fechaHora)}</div>
+  </div>
+
+  <div class="subline">
+    <div>Nombre: <b>${escapeHtml(perfil.nombre || "")}</b></div>
+    <div>Mód: <b>${escapeHtml(perfil.modulo || "")}</b> | Cod: <b>${escapeHtml(perfil.codigo || "")}</b></div>
+  </div>
+
+  <table class="kpi">
+    <tr><th>ID Bolsa</th><td class="mono"><b>${escapeHtml(id)}</b></td></tr>
+    <tr><th>Divisa</th><td><b>${escapeHtml(div)}</b></td></tr>
+    <tr><th>Monto teórico</th><td class="right"><b>${symb} ${formatWithCommas(teor,2)}</b></td></tr>
+    <tr><th>Total ingresado</th><td class="right"><b>${symb} ${formatWithCommas(ing,2)}</b></td></tr>
+    <tr><th>Diferencia</th><td class="right diff">${symb} ${formatWithCommas(dif,2)}</td></tr>
+  </table>
+
+  <div class="note">
+    <b>Efectivo</b> = <b>Billetes</b> + <b>Monedas</b> &nbsp;|&nbsp;
+    B=${symb}${formatWithCommas(cashInfo.billetesTotal,2)} &nbsp; M=${symb}${formatWithCommas(cashInfo.monedasTotal,2)} &nbsp; <b>T=${symb}${formatWithCommas(cashInfo.efectivoTotal,2)}</b>
+    <br/>
+    Leyenda: <b>B</b>=Billetes, <b>M</b>=Monedas
+  </div>
+
+  <div class="two">
+    <div>
+      <div class="sectionTitle">Efectivo (detalle)</div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:12%;">Tipo</th>
+            <th style="width:20%;">Den</th>
+            <th style="width:18%;" class="right">Pzs</th>
+            <th class="right">Sub</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${efectivoRows || `<tr><td colspan="4">—</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="sectionTitle">Cheques</div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Banco</th>
+            <th style="width:28%;">Doc</th>
+            <th class="right">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${chequesRows || `<tr><td colspan="3">—</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="barcode">
+    ${barcodeSvg || `<div style="font-size:6.4pt;">(ID no compatible Code39)</div>`}
+  </div>
+  <div class="barcode-id">${escapeHtml(code39Text || id)}</div>
+
+  <div class="cut">Etiqueta ${idx+1}</div>
+</div>`;
+    }
+
+    function splitCashByType(efectivo, div){
+      const d = DENOMS[div] || {billetes:[], monedas:[]};
+      const billetesSet = new Set((d.billetes||[]).map(x=> String(x)));
+      const monedasSet  = new Set((d.monedas||[]).map(x=> String(x)));
+
+      let billetesTotal = 0;
+      let monedasTotal = 0;
+
+      const rows = [];
+
+      for(const den of (d.billetes||[])){
+        const key = String(den);
+        const qty = num(efectivo[key] ?? 0);
+        if(qty <= 0) continue;
+        const sub = den * qty;
+        billetesTotal += sub;
+        rows.push({ tipo:"B", den, qty, sub });
+      }
+
+      for(const den of (d.monedas||[])){
+        const key = String(den);
+        const qty = num(efectivo[key] ?? 0);
+        if(qty <= 0) continue;
+        const sub = den * qty;
+        monedasTotal += sub;
+        rows.push({ tipo:"M", den, qty, sub });
+      }
+
+      for(const [k,v] of Object.entries(efectivo || {})){
+        if(billetesSet.has(k) || monedasSet.has(k)) continue;
+        const den = Number(k);
+        const qty = num(v);
+        if(!Number.isFinite(den) || qty <= 0) continue;
+        const sub = den * qty;
+        billetesTotal += sub;
+        rows.push({ tipo:"B", den, qty, sub });
+      }
+
+      return {
+        billetesTotal,
+        monedasTotal,
+        efectivoTotal: billetesTotal + monedasTotal,
+        rows
+      };
+    }
+
+    function buildEfectivoRowsForPrint(rows, div){
+      const symb = (CURRENCY[div]?.symbol || "");
+      const out = [];
+      for(const r of (rows || []).slice(0, 10)){
+        out.push(`
+          <tr>
+            <td>${r.tipo}</td>
+            <td class="right">${r.den}</td>
+            <td class="right">${r.qty}</td>
+            <td class="right">${symb} ${formatWithCommas(r.sub,2)}</td>
+          </tr>
+        `);
+      }
+      return out.join("");
+    }
+
+    function buildChequesRowsForPrint(cheques, div){
+      const symb = (CURRENCY[div]?.symbol || "");
+      const out = [];
+      for(const c of (cheques || []).slice(0, 6)){
+        const b = escapeHtml(c.banco || "");
+        const n = escapeHtml(c.numero || "");
+        const v = Number(c.valor)||0;
+        out.push(`
+          <tr>
+            <td>${b}</td>
+            <td class="mono">${n}</td>
+            <td class="right">${symb} ${formatWithCommas(v,2)}</td>
+          </tr>
+        `);
+      }
+      return out.join("");
+    }
+
+    /* =========================================================
+       MODALES open/close
+       ========================================================= */
+    function openModal(backdrop){ backdrop.classList.add("open"); }
+    function closeModal(backdrop){ backdrop.classList.remove("open"); }
+    function closeAllModals(){
+      closeModal(backdropAjustes);
+      closeModal(backdropPerfil);
+      closeModal(backdropRemesas);
+      closeModal(backdropCheques);
+      closeModal(backdropEfectivo);
+    }
+
+    /* =========================================================
+       FECHA/HORA + FRASE
+       ========================================================= */
+    function actualizarReloj(){
+      const ahora = new Date();
+      elFecha.textContent = cap1(fmtFecha.format(ahora));
+      elHora.textContent = fmtHora.format(ahora);
+    }
+
+    function diaDelAnio(d){
+      const inicio = new Date(d.getFullYear(), 0, 0);
+      const diff = d - inicio;
+      const unDia = 1000 * 60 * 60 * 24;
+      return Math.floor(diff / unDia);
+    }
+    function indiceFraseDelDia(dateObj){
+      const doy = diaDelAnio(dateObj);
+      const year = dateObj.getFullYear();
+      const seed = (year * 1000) + doy;
+      return seed % FRASES.length;
+    }
+    function cargarFraseDelDia(){
+      const hoy = new Date();
+      const idx = indiceFraseDelDia(hoy);
+      elFraseTexto.textContent = FRASES[idx];
+      localStorage.setItem("frase_hoy_idx", String(idx));
+      localStorage.setItem("frase_hoy_fecha", hoy.toDateString());
+    }
+    function otraFraseManual(){
+      const actual = elFraseTexto.textContent;
+      let idx = Math.floor(Math.random() * FRASES.length);
+      let intentos = 0;
+      while(FRASES[idx] === actual && intentos < 10){
+        idx = Math.floor(Math.random() * FRASES.length);
+        intentos++;
+      }
+      elFraseTexto.textContent = FRASES[idx];
+    }
+
+    /* =========================================================
+       FULLSCREEN
+       ========================================================= */
+    async function toggleFullscreen(){
+      try{
+        if(!document.fullscreenElement){
+          await document.documentElement.requestFullscreen();
+        }else{
+          await document.exitFullscreen();
+        }
+      }catch{}
+    }
+
+    /* =========================================================
+       TABLAS CLICK
+       ========================================================= */
+    document.getElementById("tablaRemesas").addEventListener("click", (e)=>{
+      const btn = e.target.closest("button");
+      if(!btn) return;
+      const act = btn.getAttribute("data-act");
+      const i = Number(btn.getAttribute("data-i"));
+      if(!Number.isFinite(i)) return;
+      if(act === "load") cargarRemesa(i);
+      if(act === "del") eliminarRemesa(i);
+    });
+
+    document.getElementById("tablaCheques").addEventListener("click", (e)=>{
+      const btn = e.target.closest("button");
+      if(!btn) return;
+      const act = btn.getAttribute("data-act");
+      const i = Number(btn.getAttribute("data-i"));
+      if(!Number.isFinite(i)) return;
+      if(act === "loadChk") cargarCheque(i);
+      if(act === "delChk") eliminarCheque(i);
+    });
+
+    /* =========================================================
+       EVENTOS UI
+       ========================================================= */
+    bindEfectivoInputs();
+
+    // Dock
+    dockAjustes.addEventListener("click", ()=>{ openModal(backdropAjustes); setTimeout(()=> selTema.focus(), 30); });
+    dockPerfil.addEventListener("click", ()=>{ cargarPerfil(); openModal(backdropPerfil); setTimeout(()=> perfilNombre.focus(), 30); });
+    dockRemesas.addEventListener("click", ()=>{ openModal(backdropRemesas); setTimeout(()=> remBanco.focus(), 30); });
+    dockPantallaCompleta.addEventListener("click", toggleFullscreen);
+    dockRefrescarFrase.addEventListener("click", otraFraseManual);
+
+    // Close
+    btnCerrarAjustes.addEventListener("click", ()=> closeModal(backdropAjustes));
+    xCerrarAjustes.addEventListener("click", ()=> closeModal(backdropAjustes));
+    btnRestaurarAjustes.addEventListener("click", restaurarAjustes);
+
+    btnCerrarPerfil.addEventListener("click", ()=> closeModal(backdropPerfil));
+    xCerrarPerfil.addEventListener("click", ()=> closeModal(backdropPerfil));
+    btnLimpiarPerfil.addEventListener("click", limpiarPerfil);
+
+    btnCerrarRemesas.addEventListener("click", ()=> closeModal(backdropRemesas));
+    xCerrarRemesas.addEventListener("click", ()=> closeModal(backdropRemesas));
+
+    btnCerrarCheques.addEventListener("click", ()=> closeModal(backdropCheques));
+    xCerrarCheques.addEventListener("click", ()=> closeModal(backdropCheques));
+
+    btnCerrarEfectivo.addEventListener("click", ()=> closeModal(backdropEfectivo));
+    xCerrarEfectivo.addEventListener("click", ()=> closeModal(backdropEfectivo));
+
+    // Click fuera para cerrar
+    [backdropAjustes, backdropPerfil, backdropRemesas, backdropCheques, backdropEfectivo].forEach(b=>{
+      b.addEventListener("click", (e)=>{ if(e.target === b) closeModal(b); });
+    });
+
+    // ESC
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") closeAllModals();
+    });
+
+    // Ajustes live
+    selTema.addEventListener("change", ()=> { aplicarTema(selTema.value); });
+    rngBlur.addEventListener("input", ()=> { aplicarBlur(Number(rngBlur.value)); });
+    txtMonograma.addEventListener("input", ()=> { aplicarMonograma(txtMonograma.value); });
+
+    // Perfil autosave
+    perfilNombre.addEventListener("input", guardarPerfil);
+    perfilModulo.addEventListener("input", guardarPerfil);
+    perfilCodigo.addEventListener("input", guardarPerfil);
+
+    // Formateo montos
+    remMontoTeorico.addEventListener("blur", ()=> { formatInputMoney(remMontoTeorico); markDirty(); });
+    chkValor.addEventListener("blur", ()=> { formatInputMoney(chkValor); markDirty(); });
+
+    // Remesas: cambios -> dirty + auto-guardar
+    remBanco.addEventListener("change", ()=> { updatePills(); markDirty(); });
+    remDivisa.addEventListener("change", ()=> { updatePills(); renderChequesTable(); markDirty(); });
+    remIdBolsa.addEventListener("input", ()=> { updatePills(); markDirty(); });
+    remMontoTeorico.addEventListener("input", ()=> { updatePills(); markDirty(); });
+
+    // Admin
+    btnAdminCheques.addEventListener("click", ()=>{
+      resetChequeForm();
+      renderChequesTable();
+      openModal(backdropCheques);
+      setTimeout(()=> chkBanco.focus(), 30);
+    });
+
+    btnAdminEfectivo.addEventListener("click", ()=>{
+      buildEfectivoUI();
+      openModal(backdropEfectivo);
+    });
+
+    // Cheques
+    btnChkNuevo.addEventListener("click", resetChequeForm);
+    btnChkGuardar.addEventListener("click", guardarCheque);
+
+    // Efectivo
+    btnEfectivoLimpiar.addEventListener("click", limpiarEfectivoDraft);
+    btnEfectivoGuardar.addEventListener("click", guardarEfectivo);
+
+    // Remesas acciones
+    btnGuardarRemesa.addEventListener("click", guardarRemesa);
+    btnGenerarPDF.addEventListener("click", generarImpresionPDF);
+    btnNuevo.addEventListener("click", ()=>{
+      if(confirm("¿Crear nueva remesa? (Se perderán cambios no guardados)")){
+        remIdBolsa.value = "";
+        remMontoTeorico.value = "";
+        current = { cheques: [], efectivo: {} };
+        editingRemesaIndex = null;
+        editingChequeIndex = null;
+        efectivoDraft = {};
+        renderChequesTable();
+        updatePills();
+        markDirty();
+      }
+    });
+
+    /* =========================================================
+       ADVERTENCIA AL CERRAR PESTAÑA (SI HAY CAMBIOS)
+       ========================================================= */
+    window.addEventListener("beforeunload", (e)=>{
+      if(isDirty){
+        try{ saveDraft(); }catch{}
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+
+    /* =========================================================
+       INIT
+       ========================================================= */
+    function init(){
+      cargarAjustes();
+      cargarPerfil();
+
+      actualizarReloj();
+      setInterval(actualizarReloj, 1000);
+
+      const hoy = new Date();
+      const savedDate = localStorage.getItem("frase_hoy_fecha");
+      const savedIdx = Number(localStorage.getItem("frase_hoy_idx"));
+      if(savedDate === hoy.toDateString() && Number.isFinite(savedIdx) && savedIdx >= 0 && savedIdx < FRASES.length){
+        elFraseTexto.textContent = FRASES[savedIdx];
+      }else{
+        cargarFraseDelDia();
+      }
+
+      renderRemesasTable();
+      updatePills();
+
+      restoreDraftIfAny();
+      const d = loadDraft();
+      updateDraftHint(d?.savedAt ? new Date(d.savedAt) : undefined);
+    }
+
+    init();
+  </script>
+</body>
+</html>
