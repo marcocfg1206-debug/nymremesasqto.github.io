@@ -611,6 +611,33 @@
         <span class="tooltip">Remesas</span>
       </button>
 
+      <!-- Cuadres varios -->
+      <button class="dock-btn" id="dockCuadres" aria-label="Cuadres varios">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M8 6v12" stroke="currentColor" stroke-width="1.2" opacity=".8"/>
+        </svg>
+        <span class="tooltip">Cuadres varios</span>
+      </button>
+
+      <!-- Cuadres vouchers -->
+      <button class="dock-btn" id="dockVouchers" aria-label="Cuadres montos vouchers">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M7 8v8M17 8v8" stroke="currentColor" stroke-width="1.2" opacity=".8"/>
+        </svg>
+        <span class="tooltip">Cuadres vouchers</span>
+      </button>
+
+      <!-- Cuadres boletas -->
+      <button class="dock-btn" id="dockBoletas" aria-label="Cuadres boletas">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 4h16v14H4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 10h16M8 14l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="tooltip">Cuadres boletas</span>
+      </button>
+
       <!-- Pantalla completa -->
       <button class="dock-btn" id="dockPantallaCompleta" aria-label="Pantalla completa">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -852,7 +879,7 @@
           <div class="divider"></div>
 
           <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-            <button class="btn" id="btnNuevo">Nuevo</button>
+            <button class="btn btn-danger" id="btnNuevo">Borrar datos</button>
             <button class="btn btn-primary" id="btnGuardarRemesa">Guardar remesa</button>
             <button class="btn btn-good" id="btnGenerarPDF">Generar PDF</button>
           </div>
@@ -865,6 +892,255 @@
 
       <div class="modal-actions">
         <button class="btn btn-primary" id="btnCerrarRemesas">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL CUADRES VARIOS ===================== -->
+  <div class="modal-backdrop" id="backdropCuadres" role="dialog" aria-modal="true" aria-label="Cuadres varios">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Cuadres varios</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="dot red" title="Cerrar" style="cursor:pointer" id="xCerrarCuadres"></span>
+          <span class="dot yellow" style="opacity:.75"></span>
+          <span class="dot green" style="opacity:.75"></span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="panel">
+          <h4>Ingreso de cuadres</h4>
+          <div class="row">
+            <div>
+              <label for="cuadIdBolsa">ID de bolsa (opcional)</label>
+              <input id="cuadIdBolsa" type="text" placeholder="Ej. BOLSA-005678" />
+            </div>
+            <div>
+              <label for="cuadMontoTeorico">Monto teórico</label>
+              <input id="cuadMontoTeorico" type="text" inputmode="decimal" placeholder="Ej. 5,000.00" />
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <div class="pill" id="cuadPreviewTip">Previsualización</div>
+              <div class="hint" id="cuadPreviewHint">Suma ingresada: Q 0.00 · Diferencia: Q 0.00</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <div class="hint">Ingrese billetes y monedas en Quetzales. El total se actualiza automáticamente.</div>
+
+          <div id="cuadEfectivoContenedor"></div>
+
+          <div class="divider"></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center;">
+            <button class="btn btn-danger" id="btnCuadLimpiar">Limpiar</button>
+            <button class="btn btn-primary" id="btnCuadGuardar">Guardar datos</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h4>Datos guardados</h4>
+          <table class="table" id="tablaCuadres">
+            <thead>
+              <tr>
+                <th>Fecha/Hora</th>
+                <th>ID Bolsa</th>
+                <th>Teórico</th>
+                <th>Ingresado</th>
+                <th>Diferencia</th>
+                <th style="text-align:right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <h4>Resumen</h4>
+          <div class="row">
+            <div>
+              <label>Total ingresado</label>
+              <div class="pill" id="pillCuadTotal">Q 0.00</div>
+            </div>
+            <div>
+              <label>Diferencia acumulada</label>
+              <div class="pill" id="pillCuadDiferencia">Q 0.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="btnLimpiarCuadres">Limpiar cuadres varios</button>
+        <button class="btn btn-good" id="btnGenerarPDFCuadres">Generar PDF</button>
+        <button class="btn btn-primary" id="btnCerrarCuadres">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL VOUCHERS ===================== -->
+  <div class="modal-backdrop" id="backdropVouchers" role="dialog" aria-modal="true" aria-label="Cuadres montos vouchers">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Cuadres montos vouchers</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="dot red" title="Cerrar" style="cursor:pointer" id="xCerrarVouchers"></span>
+          <span class="dot yellow" style="opacity:.75"></span>
+          <span class="dot green" style="opacity:.75"></span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="panel">
+          <h4>Ingreso de vouchers</h4>
+          <div class="row">
+            <div>
+              <label for="voucherInventario">Total inventario (opcional)</label>
+              <input id="voucherInventario" type="text" inputmode="decimal" placeholder="Ej. 5,000.00" />
+            </div>
+            <div>
+              <label for="voucherPunto">Punto (opcional)</label>
+              <input id="voucherPunto" type="text" placeholder="Ej. PTA-1" />
+            </div>
+            <div>
+              <label for="voucherTotal">Total voucher (Q)</label>
+              <input id="voucherTotal" type="text" inputmode="decimal" placeholder="Ej. 1,200.00" />
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center;">
+            <button class="btn btn-primary" id="btnGuardarVoucher">Guardar datos</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h4>Datos guardados</h4>
+          <table class="table" id="tablaVouchers">
+            <thead>
+              <tr>
+                <th>Fecha/Hora</th>
+                <th>Inventario</th>
+                <th>Punto</th>
+                <th style="text-align:right;">Total voucher</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <h4>Resumen</h4>
+          <div class="row">
+            <div>
+              <label>Total vouchers</label>
+              <div class="pill" id="pillVoucherTotal">Q 0.00</div>
+            </div>
+            <div>
+              <label>Inventario</label>
+              <div class="pill" id="pillVoucherInventario">—</div>
+            </div>
+            <div>
+              <label>Diferencia</label>
+              <div class="pill" id="pillVoucherDiferencia">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="btnLimpiarVouchers">Eliminar datos</button>
+        <button class="btn btn-good" id="btnGenerarPDFVouchers">Generar PDF</button>
+        <button class="btn btn-primary" id="btnCerrarVouchers">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL BOLETAS ===================== -->
+  <div class="modal-backdrop" id="backdropBoletas" role="dialog" aria-modal="true" aria-label="Cuadres boletas">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Cuadres boletas</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="dot red" title="Cerrar" style="cursor:pointer" id="xCerrarBoletas"></span>
+          <span class="dot yellow" style="opacity:.75"></span>
+          <span class="dot green" style="opacity:.75"></span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="panel">
+          <h4>Ingreso de boletas</h4>
+          <div class="row">
+            <div>
+              <label for="boletaMonto">Monto boleta</label>
+              <input id="boletaMonto" type="text" inputmode="decimal" placeholder="Ej. 500.00" />
+            </div>
+            <div>
+              <label for="boletaPunto">Punto (opcional)</label>
+              <input id="boletaPunto" type="text" placeholder="Ej. PTA-1" />
+            </div>
+            <div>
+              <label for="boletaNumeroBoleta">Número de boleta</label>
+              <input id="boletaNumeroBoleta" type="text" placeholder="Ej. BOL-001" />
+            </div>
+            <div>
+              <label for="boletaTipo">Adiciones o Disminuciones</label>
+              <select id="boletaTipo" style="max-width: 140px;">
+                <option value="+">Adición (+)</option>
+                <option value="-">Disminución (-)</option>
+              </select>
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <button class="btn btn-primary" id="btnGuardarBoleta">Guardar datos</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h4>Resumen de boletas</h4>
+          <table class="table" id="tablaBoletas">
+            <thead>
+              <tr>
+                <th>Fecha/Hora</th>
+                <th>Punto</th>
+                <th>#Boleta</th>
+                <th>Tipo</th>
+                <th style="text-align:right;">Monto</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <h4>Totales</h4>
+          <div id="boletasSummaryPuntos"></div>
+          <div style="margin-top:12px; padding-top:12px; border-top:1px solid #ccc;">
+            <div class="row">
+              <div>
+                <label>Total adiciones</label>
+                <div class="pill" id="pillBoletasAdiciones">Q 0.00</div>
+              </div>
+              <div>
+                <label>Total disminuciones</label>
+                <div class="pill" id="pillBoletasDisminuciones">Q 0.00</div>
+              </div>
+              <div>
+                <label>Total neto</label>
+                <div class="pill" id="pillBoletasNeto">Q 0.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="btnLimpiarBoletas">Limpiar datos</button>
+        <button class="btn btn-good" id="btnGenerarPDFBoletas">Generar PDF</button>
+        <button class="btn btn-primary" id="btnCerrarBoletas">Listo</button>
       </div>
     </div>
   </div>
@@ -1221,6 +1497,54 @@
     const btnCerrarRemesas = document.getElementById("btnCerrarRemesas");
     const xCerrarRemesas = document.getElementById("xCerrarRemesas");
 
+    const dockCuadres = document.getElementById("dockCuadres");
+    const backdropCuadres = document.getElementById("backdropCuadres");
+    const cuadIdBolsa = document.getElementById("cuadIdBolsa");
+    const cuadMontoTeorico = document.getElementById("cuadMontoTeorico");
+    const cuadPreviewHint = document.getElementById("cuadPreviewHint");
+    const cuadEfectivoContenedor = document.getElementById("cuadEfectivoContenedor");
+    const btnCuadLimpiar = document.getElementById("btnCuadLimpiar");
+    const btnCuadGuardar = document.getElementById("btnCuadGuardar");
+    const tablaCuadres = document.getElementById("tablaCuadres").querySelector("tbody");
+    const pillCuadTotal = document.getElementById("pillCuadTotal");
+    const pillCuadDiferencia = document.getElementById("pillCuadDiferencia");
+    const btnLimpiarCuadres = document.getElementById("btnLimpiarCuadres");
+    const btnGenerarPDFCuadres = document.getElementById("btnGenerarPDFCuadres");
+    const btnCerrarCuadres = document.getElementById("btnCerrarCuadres");
+    const xCerrarCuadres = document.getElementById("xCerrarCuadres");
+
+    const dockVouchers = document.getElementById("dockVouchers");
+    const backdropVouchers = document.getElementById("backdropVouchers");
+    const voucherInventario = document.getElementById("voucherInventario");
+    const voucherPunto = document.getElementById("voucherPunto");
+    const voucherTotal = document.getElementById("voucherTotal");
+    const btnGuardarVoucher = document.getElementById("btnGuardarVoucher");
+    const btnLimpiarVouchers = document.getElementById("btnLimpiarVouchers");
+    const tablaVouchers = document.getElementById("tablaVouchers").querySelector("tbody");
+    const pillVoucherTotal = document.getElementById("pillVoucherTotal");
+    const pillVoucherInventario = document.getElementById("pillVoucherInventario");
+    const pillVoucherDiferencia = document.getElementById("pillVoucherDiferencia");
+    const btnGenerarPDFVouchers = document.getElementById("btnGenerarPDFVouchers");
+    const btnCerrarVouchers = document.getElementById("btnCerrarVouchers");
+    const xCerrarVouchers = document.getElementById("xCerrarVouchers");
+
+    const dockBoletas = document.getElementById("dockBoletas");
+    const backdropBoletas = document.getElementById("backdropBoletas");
+    const boletaPunto = document.getElementById("boletaPunto");
+    const boletaNumeroBoleta = document.getElementById("boletaNumeroBoleta");
+    const boletaMonto = document.getElementById("boletaMonto");
+    const boletaTipo = document.getElementById("boletaTipo");
+    const btnGuardarBoleta = document.getElementById("btnGuardarBoleta");
+    const btnLimpiarBoletas = document.getElementById("btnLimpiarBoletas");
+    const tablaBoletas = document.getElementById("tablaBoletas").querySelector("tbody");
+    const boletasSummaryPuntos = document.getElementById("boletasSummaryPuntos");
+    const pillBoletasAdiciones = document.getElementById("pillBoletasAdiciones");
+    const pillBoletasDisminuciones = document.getElementById("pillBoletasDisminuciones");
+    const pillBoletasNeto = document.getElementById("pillBoletasNeto");
+    const btnGenerarPDFBoletas = document.getElementById("btnGenerarPDFBoletas");
+    const btnCerrarBoletas = document.getElementById("btnCerrarBoletas");
+    const xCerrarBoletas = document.getElementById("xCerrarBoletas");
+
     const draftHint = document.getElementById("draftHint");
 
     // Cheques modal
@@ -1248,6 +1572,9 @@
        ========================================================= */
     const REMESAS_KEY = "remesas_lista_v3";
     const DRAFT_KEY  = "remesas_draft_v3";
+    const CUADRES_KEY = "cuadres_varios_v1";
+    const VOUCHERS_KEY = "cuadres_vouchers_v1";
+    const BOLETAS_KEY = "cuadres_boletas_v1";
 
     /* =========================================================
        DENOMINACIONES
@@ -1258,6 +1585,11 @@
       EUR: { billetes: [500,200,100,50,20,10,5,1], monedas: [] }
     };
 
+    const CUADRE_DENOMS = {
+      billetes: [200,100,50,20,10,5,1],
+      monedas: [1,0.50,0.25,0.10,0.05,0.01]
+    };
+
     /* =========================================================
        ESTADO
        ========================================================= */
@@ -1265,6 +1597,17 @@
     let editingRemesaIndex = null;
     let editingChequeIndex = null;
     let efectivoDraft = {};
+
+    let cuadresList = [];
+    let cuadEfectivoDraft = {};
+    let cuadBaseTeorico = null;
+    let editingCuadreIndex = null;
+
+    let vouchersList = [];
+
+    let boletasList = [];
+    let boletaPuntoActual = "";
+
     let isDirty = false;
 
     let draftTimer = null;
@@ -1301,16 +1644,493 @@
       localStorage.setItem(REMESAS_KEY, JSON.stringify(list));
     }
 
+    function loadCuadres(){
+      try{ return JSON.parse(localStorage.getItem(CUADRES_KEY) || "[]"); }
+      catch{ return []; }
+    }
+    function saveCuadres(list){
+      localStorage.setItem(CUADRES_KEY, JSON.stringify(list));
+    }
+
+    function loadVouchers(){
+      try{ return JSON.parse(localStorage.getItem(VOUCHERS_KEY) || "[]"); }
+      catch{ return []; }
+    }
+    function saveVouchers(list){
+      localStorage.setItem(VOUCHERS_KEY, JSON.stringify(list));
+    }
+
+    function validateVoucherEntry(){
+      const total = num(voucherTotal.value);
+      if(total <= 0) return "Ingresa un total válido de voucher.";
+      return "";
+    }
+
+    function renderVouchersTable(){
+      tablaVouchers.innerHTML = "";
+      if(vouchersList.length === 0){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="4" style="color: rgba(255,255,255,.70);">No hay datos guardados.</td>`;
+        tablaVouchers.appendChild(tr);
+        return;
+      }
+
+      const ordered = [...vouchersList].reverse();
+      ordered.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(item.fechaHora)}</td>
+          <td>${item.inventario !== null ? money(item.inventario, 'GTQ') : '—'}</td>
+          <td>${escapeHtml(item.punto || '—')}</td>
+          <td class="right">${money(item.totalVoucher, 'GTQ')}</td>
+        `;
+        tablaVouchers.appendChild(tr);
+      });
+    }
+
+    function updateVoucherSummary(){
+      const totalVoucher = vouchersList.reduce((acc,item)=> acc + num(item.totalVoucher), 0);
+      const inventario = num(voucherInventario.value);
+      const hasInventario = inventario > 0;
+
+      pillVoucherTotal.textContent = `Total vouchers: Q ${formatWithCommas(totalVoucher,2)}`;
+      pillVoucherInventario.textContent = hasInventario ? `Q ${formatWithCommas(inventario,2)}` : "—";
+      pillVoucherDiferencia.textContent = hasInventario ? `Diferencia: Q ${formatWithCommas(inventario - totalVoucher,2)}` : "Solo suma de vouchers";
+    }
+
+    function guardarVoucher(){
+      const err = validateVoucherEntry();
+      if(err){ alert(err); return; }
+
+      const inventario = num(voucherInventario.value);
+      const entry = {
+        timestamp: new Date().toISOString(),
+        fechaHora: fmtFechaHora.format(new Date()),
+        inventario: inventario > 0 ? inventario : null,
+        punto: (voucherPunto.value || "").trim(),
+        totalVoucher: num(voucherTotal.value)
+      };
+
+      vouchersList.unshift(entry);
+      saveVouchers(vouchersList);
+      renderVouchersTable();
+      updateVoucherSummary();
+      voucherTotal.value = "";
+      voucherPunto.value = "";
+    }
+
+    function limpiarVouchers(){
+      if(vouchersList.length === 0){
+        alert("No hay datos de vouchers para eliminar.");
+        return;
+      }
+      if(!confirm("¿Eliminar todos los datos de vouchers? Esta acción no se puede deshacer.")) return;
+      vouchersList = [];
+      saveVouchers(vouchersList);
+      renderVouchersTable();
+      updateVoucherSummary();
+    }
+
+    function resetVoucherForm(){
+      voucherPunto.value = "";
+      voucherTotal.value = "";
+      updateVoucherSummary();
+    }
+
+    function buildVoucherPrintHTML(){
+      const rows = vouchersList.map(item => `
+        <tr>
+          <td>${escapeHtml(item.fechaHora)}</td>
+          <td>${item.inventario !== null ? money(item.inventario, 'GTQ') : '—'}</td>
+          <td>${escapeHtml(item.punto || '—')}</td>
+          <td class="right">${money(item.totalVoucher, 'GTQ')}</td>
+        </tr>
+      `).join("");
+
+      const totalVoucher = vouchersList.reduce((acc,item)=> acc + num(item.totalVoucher), 0);
+      const inventario = num(voucherInventario.value);
+      const hasInventario = inventario > 0;
+      const cantidadRegistros = vouchersList.length;
+      const diffText = hasInventario ? `<tr><th>Diferencia</th><td class="right">${money(inventario - totalVoucher, 'GTQ')}</td></tr>` : "";
+      const inventarioText = hasInventario ? `<tr><th>Total inventario</th><td class="right">${money(inventario, 'GTQ')}</td></tr>` : "";
+
+      return `<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Cuadres montos vouchers</title>
+<style>
+  @page { size: Letter; margin: 12mm; }
+  body{ margin:0; font-family: Arial, Helvetica, sans-serif; color:#000; background:#fff; }
+  .page{ padding: 12mm; display: flex; flex-direction: column; min-height: 100vh; }
+  h1{ font-size: 18px; margin:0 0 8px 0; }
+  .meta{ font-size: 11px; margin-bottom: 14px; }
+  table{ width:100%; border-collapse: collapse; font-size: 11px; }
+  th, td{ border: 1px solid #000; padding: 6px 8px; }
+  th{ background:#efefef; text-align:left; }
+  .right{ text-align:right; }
+  .summary{ margin-top: 14px; font-size: 11px; margin-bottom: 20px; }
+  .summary div{ margin-bottom: 4px; }
+  .summary strong{ display:inline-block; width: 120px; }
+  .footer{ margin-top: auto; padding-top: 30px; font-size: 10px; }
+  .firma-block{ margin-bottom: 24px; }
+  .firma-line{ border-bottom: 1px solid #000; width: 100%; height: 50px; margin-bottom: 4px; }
+  .firma-label{ font-size: 9px; text-align: center; width: 100%; }
+  .footer-org{ text-align: center; font-weight: bold; font-size: 11px; margin-top: 16px; }
+  .actions{ position: fixed; top: 8px; right: 8px; display:flex; gap: 8px; }
+  .btn{ border:1px solid #000; background:#fff; padding: 6px 10px; cursor:pointer; font-size: 11px; }
+  @media print{ .actions{ display:none; } }
+</style>
+</head>
+<body>
+  <div class="actions">
+    <button class="btn" onclick="window.print()">Imprimir / PDF</button>
+    <button class="btn" onclick="window.close()">Cerrar</button>
+  </div>
+  <div class="page">
+    <h1>Cuadres montos vouchers</h1>
+    <div class="meta">Generado: ${fmtFechaHora.format(new Date())}</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha/Hora</th>
+          <th>Inventario</th>
+          <th>Punto</th>
+          <th class="right">Total voucher</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows || `<tr><td colspan="4" style="text-align:center;">No hay datos guardados.</td></tr>`}
+      </tbody>
+    </table>
+    <div class="summary">
+      <div><strong>Cantidad de registros:</strong> ${cantidadRegistros}</div>
+      <div><strong>Total vouchers:</strong> ${money(totalVoucher, 'GTQ')}</div>
+      ${inventarioText}
+      ${diffText}
+    </div>
+    
+    <div class="footer">
+      <div class="firma-block">
+        <div style="display: flex; gap: 40px;">
+          <div style="flex: 1;">
+            <div class="firma-line"></div>
+            <div class="firma-label">Nombre receptores</div>
+          </div>
+          <div style="flex: 1;">
+            <div class="firma-line"></div>
+            <div class="firma-label">Firma</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-org">Sala Bancos Quetzaltenango</div>
+    </div>
+  </div>
+</body>
+</html>`;
+    }
+
+    function generarPDFVouchers(){
+      if(vouchersList.length === 0){
+        alert("No hay datos guardados para generar PDF.");
+        return;
+      }
+      const html = buildVoucherPrintHTML();
+      const w = window.open("", "_blank");
+      if(!w){ alert("El navegador bloqueó la ventana emergente. Permite pop-ups para generar el PDF."); return; }
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      w.focus();
+    }
+
+    function loadBoletas(){
+      try{ return JSON.parse(localStorage.getItem(BOLETAS_KEY) || "[]"); }
+      catch{ return []; }
+    }
+    function saveBoletas(list){
+      localStorage.setItem(BOLETAS_KEY, JSON.stringify(list));
+    }
+
+    function validateBoletaEntry(){
+      const monto = num(boletaMonto.value);
+      const nBoleta = (boletaNumeroBoleta.value || "").trim();
+      if(!nBoleta) return "Ingresa el número de boleta.";
+      if(monto <= 0) return "Ingresa un monto válido.";
+      return "";
+    }
+
+    function renderBoletasTable(){
+      tablaBoletas.innerHTML = "";
+      if(boletasList.length === 0){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="5" style="color: rgba(255,255,255,.70);">No hay datos guardados.</td>`;
+        tablaBoletas.appendChild(tr);
+        return;
+      }
+
+      const ordered = [...boletasList].reverse();
+      ordered.forEach(item => {
+        const tr = document.createElement("tr");
+        const tipoLabel = item.tipo === "+" ? "Adición" : "Disminución";
+        const montoDisplay = `${item.tipo}${money(Math.abs(item.monto), 'GTQ')}`;
+        tr.innerHTML = `
+          <td>${escapeHtml(item.fechaHora)}</td>
+          <td>${escapeHtml(item.punto || '—')}</td>
+          <td>${escapeHtml(item.numeroBoleta)}</td>
+          <td>${tipoLabel}</td>
+          <td class="right">${montoDisplay}</td>
+        `;
+        tablaBoletas.appendChild(tr);
+      });
+    }
+
+    function updateBoletasSummary(){
+      const adiciones = boletasList.filter(b => b.tipo === "+").reduce((acc,item)=> acc + item.monto, 0);
+      const disminuciones = Math.abs(boletasList.filter(b => b.tipo === "-").reduce((acc,item)=> acc + item.monto, 0));
+      const neto = adiciones - disminuciones;
+
+      pillBoletasAdiciones.textContent = `Q ${formatWithCommas(adiciones,2)}`;
+      pillBoletasDisminuciones.textContent = `Q ${formatWithCommas(disminuciones,2)}`;
+      pillBoletasNeto.textContent = `Q ${formatWithCommas(neto,2)}`;
+
+      const porPunto = {};
+      boletasList.forEach(item => {
+        const key = item.punto || "Sin punto";
+        if(!porPunto[key]) porPunto[key] = { adiciones: 0, disminuciones: 0 };
+        if(item.tipo === "+") porPunto[key].adiciones += item.monto;
+        else porPunto[key].disminuciones += item.monto;
+      });
+
+      let html = "";
+      for(const [punto, datos] of Object.entries(porPunto)){
+        const net = datos.adiciones - datos.disminuciones;
+        html += `
+          <div style="margin-bottom: 10px; padding: 8px; background: rgba(255,255,255,.05); border-radius: 4px;">
+            <strong>${escapeHtml(punto)}</strong><br/>
+            Adiciones: Q ${formatWithCommas(datos.adiciones,2)} · Disminuciones: Q ${formatWithCommas(datos.disminuciones,2)} · Neto: Q ${formatWithCommas(net,2)}
+          </div>
+        `;
+      }
+      boletasSummaryPuntos.innerHTML = html || "<div style=\"color: rgba(255,255,255,.5);\">Sin datos grupiados por punto</div>";
+    }
+
+    function resetBoletaForm(){
+      boletaNumeroBoleta.value = "";
+      boletaMonto.value = "";
+      boletaTipo.value = "+";
+    }
+
+    function guardarBoleta(){
+      const err = validateBoletaEntry();
+      if(err){ alert(err); return; }
+
+      const punto = (boletaPunto.value || "").trim();
+      if(punto && punto !== boletaPuntoActual) boletaPuntoActual = punto;
+
+      const monto = num(boletaMonto.value);
+      const tipo = boletaTipo.value;
+      const entry = {
+        timestamp: new Date().toISOString(),
+        fechaHora: fmtFechaHora.format(new Date()),
+        punto: boletaPuntoActual || "",
+        numeroBoleta: (boletaNumeroBoleta.value || "").trim(),
+        monto: Math.abs(monto),
+        tipo: tipo
+      };
+
+      boletasList.unshift(entry);
+      saveBoletas(boletasList);
+      renderBoletasTable();
+      updateBoletasSummary();
+      resetBoletaForm();
+    }
+
+    function limpiarBoletas(){
+      if(boletasList.length === 0){
+        alert("No hay datos de boletas para limpiar.");
+        return;
+      }
+      if(!confirm("¿Eliminar todos los datos de boletas? Esta acción no se puede deshacer.")) return;
+      boletasList = [];
+      boletaPuntoActual = "";
+      saveBoletas(boletasList);
+      renderBoletasTable();
+      updateBoletasSummary();
+      boletaPunto.value = "";
+    }
+
+    function buildBoletaPrintHTML(){
+      const rows = boletasList.map(item => {
+        const tipoLabel = item.tipo === "+" ? "Adición" : "Disminución";
+        const montoDisplay = `${item.tipo}${money(Math.abs(item.monto), 'GTQ')}`;
+        return `
+          <tr>
+            <td>${escapeHtml(item.fechaHora)}</td>
+            <td>${escapeHtml(item.punto || '—')}</td>
+            <td>${escapeHtml(item.numeroBoleta)}</td>
+            <td>${tipoLabel}</td>
+            <td class="right">${montoDisplay}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const adiciones = boletasList.filter(b => b.tipo === "+").reduce((acc,item)=> acc + item.monto, 0);
+      const disminuciones = Math.abs(boletasList.filter(b => b.tipo === "-").reduce((acc,item)=> acc + item.monto, 0));
+      const neto = adiciones - disminuciones;
+      const cantidadRegistros = boletasList.length;
+
+      const porPunto = {};
+      boletasList.forEach(item => {
+        const key = item.punto || "Sin punto";
+        if(!porPunto[key]) porPunto[key] = { adiciones: 0, disminuciones: 0 };
+        if(item.tipo === "+") porPunto[key].adiciones += item.monto;
+        else porPunto[key].disminuciones += item.monto;
+      });
+
+      let puntosDetail = "";
+      for(const [punto, datos] of Object.entries(porPunto)){
+        const net = datos.adiciones - datos.disminuciones;
+        puntosDetail += `
+          <tr style="background: #f9f9f9;">
+            <td colspan="4" style="text-align: left; padding: 8px;"><strong>${escapeHtml(punto)}</strong></td>
+            <td colspan="1" style="text-align: right; padding: 8px;"></td>
+          </tr>
+          <tr>
+            <td colspan="3">Adiciones</td>
+            <td>—</td>
+            <td class="right">+Q ${formatWithCommas(datos.adiciones,2)}</td>
+          </tr>
+          <tr>
+            <td colspan="3">Disminuciones</td>
+            <td>—</td>
+            <td class="right">-Q ${formatWithCommas(datos.disminuciones,2)}</td>
+          </tr>
+          <tr>
+            <td colspan="3"><strong>Neto ${escapeHtml(punto)}</strong></td>
+            <td>—</td>
+            <td class="right"><strong>Q ${formatWithCommas(net,2)}</strong></td>
+          </tr>
+        `;
+      }
+
+      return `<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Cuadres boletas</title>
+<style>
+  @page { size: Letter; margin: 12mm; }
+  body{ margin:0; font-family: Arial, Helvetica, sans-serif; color:#000; background:#fff; }
+  .page{ padding: 12mm; display: flex; flex-direction: column; min-height: 100vh; }
+  h1{ font-size: 18px; margin:0 0 8px 0; }
+  .meta{ font-size: 11px; margin-bottom: 14px; }
+  table{ width:100%; border-collapse: collapse; font-size: 11px; }
+  th, td{ border: 1px solid #000; padding: 6px 8px; }
+  th{ background:#efefef; text-align:left; }
+  .right{ text-align:right; }
+  .summary{ margin-top: 14px; font-size: 11px; margin-bottom: 20px; }
+  .summary div{ margin-bottom: 4px; }
+  .summary strong{ display:inline-block; width: 120px; }
+  .footer{ margin-top: auto; padding-top: 30px; font-size: 10px; }
+  .firma-block{ margin-bottom: 24px; }
+  .firma-line{ border-bottom: 1px solid #000; width: 100%; height: 50px; margin-bottom: 4px; }
+  .firma-label{ font-size: 9px; text-align: center; width: 100%; }
+  .footer-org{ text-align: center; font-weight: bold; font-size: 11px; margin-top: 16px; }
+  .actions{ position: fixed; top: 8px; right: 8px; display:flex; gap: 8px; }
+  .btn{ border:1px solid #000; background:#fff; padding: 6px 10px; cursor:pointer; font-size: 11px; }
+  @media print{ .actions{ display:none; } }
+</style>
+</head>
+<body>
+  <div class="actions">
+    <button class="btn" onclick="window.print()">Imprimir / PDF</button>
+    <button class="btn" onclick="window.close()">Cerrar</button>
+  </div>
+  <div class="page">
+    <h1>Cuadres boletas</h1>
+    <div class="meta">Generado: ${fmtFechaHora.format(new Date())}</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha/Hora</th>
+          <th>Punto</th>
+          <th>#Boleta</th>
+          <th>Tipo</th>
+          <th class="right">Monto</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows || `<tr><td colspan="5" style="text-align:center;">No hay datos guardados.</td></tr>`}
+      </tbody>
+    </table>
+
+    <div class="summary">
+      <div><strong>Cantidad de registros:</strong> ${cantidadRegistros}</div>
+      <div><strong>Total adiciones:</strong> Q ${formatWithCommas(adiciones,2)}</div>
+      <div><strong>Total disminuciones:</strong> Q ${formatWithCommas(disminuciones,2)}</div>
+      <div><strong>Total neto:</strong> Q ${formatWithCommas(neto,2)}</div>
+    </div>
+
+    ${puntosDetail ? `<div style="margin-top: 16px;"><h3 style="font-size: 12px; margin: 8px 0;">Desglose por Punto</h3><table style="font-size: 10px;">${puntosDetail}</table></div>` : ""}
+
+    <div class="footer">
+      <div class="firma-block">
+        <div style="display: flex; gap: 40px;">
+          <div style="flex: 1;">
+            <div class="firma-line"></div>
+            <div class="firma-label">Nombre receptores</div>
+          </div>
+          <div style="flex: 1;">
+            <div class="firma-line"></div>
+            <div class="firma-label">Firma</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-org">Sala Bancos Quetzaltenango</div>
+    </div>
+  </div>
+</body>
+</html>`;
+    }
+
+    function generarPDFBoletas(){
+      if(boletasList.length === 0){
+        alert("No hay datos guardados para generar PDF.");
+        return;
+      }
+      const html = buildBoletaPrintHTML();
+      const w = window.open("", "_blank");
+      if(!w){ alert("El navegador bloqueó la ventana emergente. Permite pop-ups para generar el PDF."); return; }
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      w.focus();
+    }
+
     /* =========================================================
        TOTALES
        ========================================================= */
     function totalCheques(){
       return current.cheques.reduce((acc,c)=> acc + num(c.valor), 0);
     }
+    function parseEfectivoKey(key){
+      const raw = String(key ?? "");
+      const parts = raw.split(":");
+      if(parts.length === 2){
+        return { tipo: parts[0], denom: Number(parts[1]) };
+      }
+      return { tipo: "B", denom: Number(raw) };
+    }
+
     function totalEfectivo(){
       let t = 0;
-      for(const [den, qty] of Object.entries(current.efectivo || {})){
-        t += Number(den) * num(qty);
+      for(const [key, qty] of Object.entries(current.efectivo || {})){
+        const { denom } = parseEfectivoKey(key);
+        if(!Number.isFinite(denom)) continue;
+        t += denom * num(qty);
       }
       return t;
     }
@@ -1336,6 +2156,420 @@
       resChequesHint.textContent = current.cheques.length ? `${current.cheques.length} cheque(s) registrados.` : "0 cheques registrados.";
       resEfectivo.textContent = `Total efectivo: ${money(totalEfectivo(), div)}`;
       resEfectivoHint.textContent = Object.keys(current.efectivo||{}).length ? "Conteo por denominación guardado." : "Sin conteo de denominaciones.";
+    }
+
+    function calculateCuadreIngresado(){
+      let total = 0;
+      for(const [key, qty] of Object.entries(cuadEfectivoDraft || {})){
+        const { denom } = parseEfectivoKey(key);
+        if(!Number.isFinite(denom)) continue;
+        total += denom * num(qty);
+      }
+      return total;
+    }
+
+    function buildAccumulatedDenominations(){
+      const denom = {};
+      for(const item of cuadresList){
+        for(const [key, qty] of Object.entries(item.efectivo || {})){
+          denom[key] = (num(denom[key]) + num(qty));
+        }
+      }
+      return denom;
+    }
+
+    function getCuadBaseTeorico(){
+      if(cuadBaseTeorico !== null) return cuadBaseTeorico;
+      if(cuadresList.length > 0) return num(cuadresList[0].montoTeorico);
+      return num(cuadMontoTeorico.value);
+    }
+
+    function updateCuadrePreview(){
+
+      const teor = getCuadBaseTeorico();
+      const totalGuardado = cuadresList.reduce((acc,item)=> acc + num(item.totalIngresado), 0);
+      const diff = teor - totalGuardado;
+      const accumulated = buildAccumulatedDenominations();
+      
+      let denominationText = "Piezas ingresadas: ";
+      if(Object.keys(accumulated).length === 0){
+        denominationText += "ninguna";
+      } else {
+        const parts = [];
+        for(const [key, qty] of Object.entries(accumulated)){
+          if(num(qty) > 0){
+            const { tipo, denom: denomVal } = parseEfectivoKey(key);
+            const prefix = tipo === "B" ? "B" : "M";
+            parts.push(`${prefix}${denomVal}=${num(qty)}`);
+          }
+        }
+        denominationText += parts.join(" | ");
+      }
+      
+      cuadPreviewHint.textContent = `${denominationText} · Total guardado: Q ${formatWithCommas(totalGuardado,2)} · Saldo restante: Q ${formatWithCommas(diff,2)}`;
+    }
+
+    function recalculateCuadreDiferencias(){
+      const base = getCuadBaseTeorico();
+      let cumulative = 0;
+      for(let i = cuadresList.length - 1; i >= 0; i -= 1){
+        cumulative += num(cuadresList[i].totalIngresado);
+        cuadresList[i].diferencia = base - cumulative;
+      }
+    }
+
+    function buildCuadresUI(){
+      cuadEfectivoDraft = structuredClone(cuadEfectivoDraft || {});
+      cuadEfectivoContenedor.innerHTML = "";
+      const blocks = [];
+      blocks.push(makeCuadreDenomBlock("Billetes", CUADRE_DENOMS.billetes, "B"));
+      blocks.push(makeCuadreDenomBlock("Monedas", CUADRE_DENOMS.monedas, "M"));
+      blocks.forEach(b => cuadEfectivoContenedor.appendChild(b));
+      updateCuadrePreview();
+    }
+
+    function makeCuadreDenomBlock(title, denoms, tipo){
+      const panel = document.createElement("div");
+      panel.className = "panel";
+      panel.innerHTML = `<h4>${title}</h4>`;
+
+      const table = document.createElement("table");
+      table.className = "table";
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Denom</th>
+            <th>Pzs</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      `;
+      const tbody = table.querySelector("tbody");
+
+      denoms.forEach(den=>{
+        const key = `${tipo}:${String(den)}`;
+        const qty = num(cuadEfectivoDraft[key] ?? 0);
+        const displayQty = qty > 0 ? String(qty) : "";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${den}</td>
+          <td>
+            <input type="text" inputmode="numeric" value="${displayQty}" data-den="${key}" class="cuadQty" style="max-width:140px;" />
+          </td>
+          <td class="cuadSub" data-sub="${key}">${money(den*qty, 'GTQ')}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      panel.appendChild(table);
+      return panel;
+    }
+
+    function bindCuadreInputs(){
+      cuadEfectivoContenedor.addEventListener("input", (e)=>{
+        const inp = e.target;
+        if(!(inp && inp.classList.contains("cuadQty"))) return;
+
+        const den = inp.getAttribute("data-den");
+        const raw = String(inp.value || "").replace(/[^\d]/g, "");
+        if(raw === ""){
+          inp.value = "";
+          delete cuadEfectivoDraft[den];
+        } else {
+          const qty = Math.max(0, Math.floor(Number(raw)));
+          inp.value = String(qty);
+          cuadEfectivoDraft[den] = qty;
+        }
+
+        const sub = document.querySelector(`.cuadSub[data-sub="${CSS.escape(den)}"]`);
+        const { denom } = parseEfectivoKey(den);
+        const qtyNow = num(cuadEfectivoDraft[den] ?? 0);
+        if(sub) sub.textContent = money(denom * qtyNow, 'GTQ');
+
+        updateCuadrePreview();
+      });
+    }
+
+    function resetCuadreForm(){
+      editingCuadreIndex = null;
+      if(btnCuadGuardar) btnCuadGuardar.textContent = "Guardar datos";
+      cuadIdBolsa.value = "";
+      cuadEfectivoDraft = {};
+      cuadMontoTeorico.value = cuadBaseTeorico !== null ? formatWithCommas(getCuadBaseTeorico(), 2) : "";
+      buildCuadresUI();
+      updateCuadrePreview();
+    }
+
+    function validateCuadreEntry(){
+      const total = calculateCuadreIngresado();
+      if(total <= 0) return "Ingresa al menos una denominación con cantidad mayor a cero.";
+      return "";
+    }
+
+    function renderCuadresTable(){
+      const list = cuadresList;
+      tablaCuadres.innerHTML = "";
+      if(list.length === 0){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="6" style="color: rgba(255,255,255,.70);">No hay datos guardados.</td>`;
+        tablaCuadres.appendChild(tr);
+        return;
+      }
+
+      const ordered = [...list].reverse();
+      ordered.forEach((item, idx)=>{
+        const originalIndex = list.length - idx - 1;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(item.fechaHora)}</td>
+          <td>${escapeHtml(item.idBolsa || "—")}</td>
+          <td>${money(item.montoTeorico, 'GTQ')}</td>
+          <td>${money(item.totalIngresado, 'GTQ')}</td>
+          <td>${money(item.diferencia, 'GTQ')}</td>
+          <td style="text-align:right;">
+            <div class="inline-actions">
+              <button class="btn mini btn-secondary" data-act="loadCuad" data-i="${originalIndex}">Cargar</button>
+              <button class="btn mini btn-danger" data-act="delCuad" data-i="${originalIndex}">Eliminar</button>
+            </div>
+          </td>
+        `;
+        tablaCuadres.appendChild(tr);
+      });
+    }
+
+    function cargarCuadre(idx){
+      const item = cuadresList[idx];
+      if(!item) return;
+      editingCuadreIndex = idx;
+      cuadIdBolsa.value = item.idBolsa || "";
+      cuadMontoTeorico.value = formatWithCommas(getCuadBaseTeorico(), 2);
+      cuadEfectivoDraft = structuredClone(item.efectivo || {});
+      buildCuadresUI();
+      updateCuadrePreview();
+      if(btnCuadGuardar) btnCuadGuardar.textContent = "Actualizar";
+      openModal(backdropCuadres);
+      setTimeout(()=> cuadIdBolsa.focus(), 30);
+    }
+
+    function limpiarCuadres(){
+      if(cuadresList.length === 0){
+        alert("No hay datos de Cuadres varios para limpiar.");
+        return;
+      }
+      if(!confirm("¿Borrar todos los datos de Cuadres varios? Esta acción no se puede deshacer.")) return;
+      cuadresList = [];
+      cuadBaseTeorico = null;
+      editingCuadreIndex = null;
+      saveCuadres(cuadresList);
+      renderCuadresTable();
+      updateCuadrePreview();
+      updateCuadresSummary();
+      resetCuadreForm();
+      alert("Todos los datos de Cuadres varios han sido eliminados.");
+    }
+
+    function calculateTotalPieces(){
+      let count = 0;
+      for(const item of cuadresList){
+        for(const [key, qty] of Object.entries(item.efectivo || {})){
+          count += num(qty);
+        }
+      }
+      return count;
+    }
+
+    function updateCuadresSummary(){
+      const totalIngresado = cuadresList.reduce((acc,item)=> acc + num(item.totalIngresado), 0);
+      const teor = getCuadBaseTeorico();
+      const totalDiferencia = teor - totalIngresado;
+      const totalPieces = calculateTotalPieces();
+      const accumulated = buildAccumulatedDenominations();
+      
+      let denominationSummary = "";
+      for(const [key, qty] of Object.entries(accumulated)){
+        if(num(qty) > 0){
+          const { tipo, denom: denomVal } = parseEfectivoKey(key);
+          const label = tipo === "B" ? "Billete" : "Moneda";
+          denominationSummary += `${label} ${denomVal}: ${num(qty)}pzs | `;
+        }
+      }
+      
+      pillCuadTotal.textContent = `Total: Q ${formatWithCommas(totalIngresado,2)} (${totalPieces} pzs) · ${denominationSummary.slice(0, -3)}`;
+      pillCuadDiferencia.textContent = `Monto Teórico: Q ${formatWithCommas(teor,2)} | Ingresado: Q ${formatWithCommas(totalIngresado,2)} | Saldo restante: Q ${formatWithCommas(totalDiferencia,2)}`;
+    }
+
+    function guardarCuadre(){
+      const err = validateCuadreEntry();
+      if(err){ alert(err); return; }
+
+      const base = getCuadBaseTeorico();
+      if(cuadBaseTeorico === null){
+        cuadBaseTeorico = base;
+      }
+
+      const currentTotal = calculateCuadreIngresado();
+      const entry = {
+        timestamp: new Date().toISOString(),
+        fechaHora: fmtFechaHora.format(new Date()),
+        idBolsa: (cuadIdBolsa.value || "").trim(),
+        montoTeorico: base,
+        efectivo: structuredClone(cuadEfectivoDraft),
+        totalIngresado: currentTotal,
+        totalPiezas: Object.values(cuadEfectivoDraft).reduce((acc,qty)=> acc + num(qty), 0),
+        diferencia: 0
+      };
+
+      if(editingCuadreIndex !== null && cuadresList[editingCuadreIndex]){
+        cuadresList[editingCuadreIndex] = entry;
+      } else {
+        cuadresList.unshift(entry);
+      }
+
+      recalculateCuadreDiferencias();
+      saveCuadres(cuadresList);
+      renderCuadresTable();
+      updateCuadrePreview();
+      updateCuadresSummary();
+      resetCuadreForm();
+      alert(editingCuadreIndex !== null ? "Datos actualizados correctamente." : "Datos guardados correctamente.");
+    }
+
+    function eliminarCuadre(idx){
+      if(!cuadresList[idx]) return;
+      if(!confirm("¿Eliminar este dato guardado?")) return;
+      cuadresList.splice(idx,1);
+      if(cuadresList.length === 0){
+        cuadBaseTeorico = null;
+      }
+      recalculateCuadreDiferencias();
+      saveCuadres(cuadresList);
+      renderCuadresTable();
+      updateCuadrePreview();
+      updateCuadresSummary();
+    }
+
+    function buildPDFDenominationRows(){
+      const accumulated = buildAccumulatedDenominations();
+      const rows = [];
+      
+      for(const [key, qty] of Object.entries(accumulated)){
+        if(num(qty) > 0){
+          const { tipo, denom } = parseEfectivoKey(key);
+          const label = tipo === "B" ? "Billete" : "Moneda";
+          const subtotal = denom * num(qty);
+          rows.push(`
+            <tr>
+              <td>${label}</td>
+              <td>${denom}</td>
+              <td class="right">${num(qty)}</td>
+              <td class="right">${money(subtotal, 'GTQ')}</td>
+            </tr>
+          `);
+        }
+      }
+      
+      return rows.length > 0 ? rows.join("") : `<tr><td colspan="4" style="text-align:center;">Sin datos</td></tr>`;
+    }
+
+    function buildCuadresPrintHTML(){
+      const rows = cuadresList.map(item => {
+        const idDisplay = item.idBolsa ? `| ${escapeHtml(item.idBolsa)} |` : "—";
+        const piezas = num(item.totalPiezas ?? 0);
+        return `
+          <tr>
+            <td>${escapeHtml(item.fechaHora)}</td>
+            <td>${idDisplay}</td>
+            <td class="right">${money(item.montoTeorico, 'GTQ')}</td>
+            <td class="right">${piezas}</td>
+            <td class="right">${money(item.totalIngresado, 'GTQ')}</td>
+            <td class="right">${money(item.diferencia, 'GTQ')}</td>
+          </tr>
+        `;
+      }).join("");
+
+      return `<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Cuadres varios</title>
+<style>
+  @page { size: Letter; margin: 12mm; }
+  body{ margin:0; font-family: Arial, Helvetica, sans-serif; color:#000; background:#fff; }
+  .page{ padding: 12mm; }
+  h1{ font-size: 18px; margin:0 0 8px 0; }
+  .meta{ font-size: 11px; margin-bottom: 14px; }
+  table{ width:100%; border-collapse: collapse; font-size: 10px; }
+  th, td{ border: 1px solid #000; padding: 6px 8px; }
+  th{ background:#efefef; text-align:left; }
+  .right{ text-align:right; }
+  .barcode-id{ font-family: monospace; font-size: 10px; margin-top: 4px; }
+  .summary{ margin-top: 14px; font-size: 11px; }
+  .summary strong{ display:inline-block; width: 110px; }
+  .actions{ position: fixed; top: 8px; right: 8px; display:flex; gap: 8px; }
+  .btn{ border:1px solid #000; background:#fff; padding: 6px 10px; cursor:pointer; font-size: 11px; }
+  @media print{ .actions{ display:none; } }
+</style>
+</head>
+<body>
+  <div class="actions">
+    <button class="btn" onclick="window.print()">Imprimir / PDF</button>
+    <button class="btn" onclick="window.close()">Cerrar</button>
+  </div>
+  <div class="page">
+    <h1>Resumen Cuadres varios</h1>
+    <div class="meta">Generado: ${fmtFechaHora.format(new Date())}</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha/Hora</th>
+          <th>ID Bolsa</th>
+          <th class="right">Teórico</th>
+          <th class="right">Piezas</th>
+          <th class="right">Ingresado</th>
+          <th class="right">Diferencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows || `<tr><td colspan="6" style="text-align:center;">No hay datos guardados.</td></tr>`}
+    <h2 style="font-size:14px; margin:16px 0 8px 0;">Desglose de Denominaciones</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Denominación</th>
+          <th class="right">Cantidad (pzs)</th>
+          <th class="right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${buildPDFDenominationRows()}
+      </tbody>
+    </table>
+    <div class="summary">
+      <div><strong>Monto Teórico:</strong> ${money(cuadresList[0]?.montoTeorico || 0, 'GTQ')}</div>
+      <div><strong>Total ingresado:</strong> ${money(cuadresList.reduce((acc,item)=> acc + num(item.totalIngresado),0), 'GTQ')}</div>
+      <div><strong>Total de piezas:</strong> ${calculateTotalPieces()} unidades</div>
+      <div><strong>Diferencia total:</strong> ${money(cuadresList[0] ? (num(cuadresList[0]?.montoTeorico) - cuadresList.reduce((acc,item)=> acc + num(item.totalIngresado),0)) : 0, 'GTQ')}</div>
+    </div>
+  </div>
+</body>
+</html>`;
+    }
+
+    function generarPDFCuadres(){
+      if(cuadresList.length === 0){
+        alert("No hay datos guardados para generar PDF.");
+        return;
+      }
+      const html = buildCuadresPrintHTML();
+      const w = window.open("", "_blank");
+      if(!w){ alert("El navegador bloqueó la ventana emergente. Permite pop-ups para generar el PDF."); return; }
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      w.focus();
     }
 
     /* =========================================================
@@ -1648,16 +2882,16 @@
       efectivoContenedor.innerHTML = "";
       const blocks = [];
 
-      blocks.push(makeDenomBlock("Billetes", d.billetes, div));
+      blocks.push(makeDenomBlock("Billetes", d.billetes, div, "B"));
       if(d.monedas && d.monedas.length){
-        blocks.push(makeDenomBlock("Monedas", d.monedas, div));
+        blocks.push(makeDenomBlock("Monedas", d.monedas, div, "M"));
       }
 
       blocks.forEach(b => efectivoContenedor.appendChild(b));
       updateTotalEfectivoModal();
     }
 
-    function makeDenomBlock(title, denoms, div){
+    function makeDenomBlock(title, denoms, div, tipo){
       const panel = document.createElement("div");
       panel.className = "panel";
       panel.innerHTML = `<h4>${title}</h4>`;
@@ -1677,7 +2911,7 @@
       const tbody = table.querySelector("tbody");
 
       denoms.forEach(den=>{
-        const key = String(den);
+        const key = `${tipo}:${String(den)}`;
         const qty = num(efectivoDraft[key] ?? 0);
         const displayQty = qty > 0 ? String(qty) : "";
 
@@ -1699,8 +2933,10 @@
     function updateTotalEfectivoModal(){
       const div = remDivisa.value;
       let t = 0;
-      for(const [den, qty] of Object.entries(efectivoDraft || {})){
-        t += Number(den) * num(qty);
+      for(const [key, qty] of Object.entries(efectivoDraft || {})){
+        const { denom } = parseEfectivoKey(key);
+        if(!Number.isFinite(denom)) continue;
+        t += denom * num(qty);
       }
       pillTotalEfectivoModal.textContent = `Total efectivo: ${money(t, div)}`;
     }
@@ -1725,7 +2961,8 @@
 
         const sub = document.querySelector(`.efSub[data-sub="${CSS.escape(den)}"]`);
         const qtyNow = num(efectivoDraft[den] ?? 0);
-        if(sub) sub.textContent = money(Number(den) * qtyNow, div);
+        const { denom } = parseEfectivoKey(den);
+        if(sub) sub.textContent = money(denom * qtyNow, div);
 
         updateTotalEfectivoModal();
 
@@ -2091,16 +3328,14 @@
 
     function splitCashByType(efectivo, div){
       const d = DENOMS[div] || {billetes:[], monedas:[]};
-      const billetesSet = new Set((d.billetes||[]).map(x=> String(x)));
-      const monedasSet  = new Set((d.monedas||[]).map(x=> String(x)));
-
       let billetesTotal = 0;
       let monedasTotal = 0;
 
       const rows = [];
+      const denomKey = (tipo, den)=> `${tipo}:${String(den)}`;
 
       for(const den of (d.billetes||[])){
-        const key = String(den);
+        const key = denomKey("B", den);
         const qty = num(efectivo[key] ?? 0);
         if(qty <= 0) continue;
         const sub = den * qty;
@@ -2109,7 +3344,7 @@
       }
 
       for(const den of (d.monedas||[])){
-        const key = String(den);
+        const key = denomKey("M", den);
         const qty = num(efectivo[key] ?? 0);
         if(qty <= 0) continue;
         const sub = den * qty;
@@ -2118,7 +3353,7 @@
       }
 
       for(const [k,v] of Object.entries(efectivo || {})){
-        if(billetesSet.has(k) || monedasSet.has(k)) continue;
+        if(k.includes(":")) continue;
         const den = Number(k);
         const qty = num(v);
         if(!Number.isFinite(den) || qty <= 0) continue;
@@ -2257,15 +3492,27 @@
       if(act === "delChk") eliminarCheque(i);
     });
 
+    document.getElementById("tablaCuadres").addEventListener("click", (e)=>{
+      const btn = e.target.closest("button");
+      if(!btn) return;
+      const act = btn.getAttribute("data-act");
+      const i = Number(btn.getAttribute("data-i"));
+      if(!Number.isFinite(i)) return;
+      if(act === "delCuad") eliminarCuadre(i);
+      if(act === "loadCuad") cargarCuadre(i);
+    });
+
     /* =========================================================
        EVENTOS UI
        ========================================================= */
     bindEfectivoInputs();
+    bindCuadreInputs();
 
     // Dock
     dockAjustes.addEventListener("click", ()=>{ openModal(backdropAjustes); setTimeout(()=> selTema.focus(), 30); });
     dockPerfil.addEventListener("click", ()=>{ cargarPerfil(); openModal(backdropPerfil); setTimeout(()=> perfilNombre.focus(), 30); });
     dockRemesas.addEventListener("click", ()=>{ openModal(backdropRemesas); setTimeout(()=> remBanco.focus(), 30); });
+    dockCuadres.addEventListener("click", ()=>{ resetCuadreForm(); openModal(backdropCuadres); setTimeout(()=> cuadIdBolsa.focus(), 30); });
     dockPantallaCompleta.addEventListener("click", toggleFullscreen);
     dockRefrescarFrase.addEventListener("click", otraFraseManual);
 
@@ -2281,6 +3528,30 @@
     btnCerrarRemesas.addEventListener("click", ()=> closeModal(backdropRemesas));
     xCerrarRemesas.addEventListener("click", ()=> closeModal(backdropRemesas));
 
+    btnCerrarCuadres.addEventListener("click", ()=> closeModal(backdropCuadres));
+    xCerrarCuadres.addEventListener("click", ()=> closeModal(backdropCuadres));
+    btnCuadLimpiar.addEventListener("click", resetCuadreForm);
+    btnCuadGuardar.addEventListener("click", guardarCuadre);
+    btnLimpiarCuadres.addEventListener("click", limpiarCuadres);
+    btnGenerarPDFCuadres.addEventListener("click", generarPDFCuadres);
+
+    dockVouchers.addEventListener("click", ()=>{ resetVoucherForm(); openModal(backdropVouchers); setTimeout(()=> voucherInventario.focus(), 30); });
+    btnGuardarVoucher.addEventListener("click", guardarVoucher);
+    btnLimpiarVouchers.addEventListener("click", limpiarVouchers);
+    btnGenerarPDFVouchers.addEventListener("click", generarPDFVouchers);
+    btnCerrarVouchers.addEventListener("click", ()=> closeModal(backdropVouchers));
+    xCerrarVouchers.addEventListener("click", ()=> closeModal(backdropVouchers));
+
+    dockBoletas.addEventListener("click", ()=>{ resetBoletaForm(); openModal(backdropBoletas); setTimeout(()=> boletaNumeroBoleta.focus(), 30); });
+    btnGuardarBoleta.addEventListener("click", guardarBoleta);
+    btnLimpiarBoletas.addEventListener("click", limpiarBoletas);
+    btnGenerarPDFBoletas.addEventListener("click", generarPDFBoletas);
+    btnCerrarBoletas.addEventListener("click", ()=> closeModal(backdropBoletas));
+    xCerrarBoletas.addEventListener("click", ()=> closeModal(backdropBoletas));
+
+    boletaPunto.addEventListener("input", ()=> markDirty());
+    boletaMonto.addEventListener("blur", ()=> { formatInputMoney(boletaMonto); markDirty(); });
+
     btnCerrarCheques.addEventListener("click", ()=> closeModal(backdropCheques));
     xCerrarCheques.addEventListener("click", ()=> closeModal(backdropCheques));
 
@@ -2288,7 +3559,7 @@
     xCerrarEfectivo.addEventListener("click", ()=> closeModal(backdropEfectivo));
 
     // Click fuera para cerrar
-    [backdropAjustes, backdropPerfil, backdropRemesas, backdropCheques, backdropEfectivo].forEach(b=>{
+    [backdropAjustes, backdropPerfil, backdropRemesas, backdropCheques, backdropEfectivo, backdropCuadres, backdropVouchers, backdropBoletas].forEach(b=>{
       b.addEventListener("click", (e)=>{ if(e.target === b) closeModal(b); });
     });
 
@@ -2317,6 +3588,14 @@
     remIdBolsa.addEventListener("input", ()=> { updatePills(); markDirty(); });
     remMontoTeorico.addEventListener("input", ()=> { updatePills(); markDirty(); });
 
+    cuadIdBolsa.addEventListener("input", ()=> { updateCuadrePreview(); markDirty(); });
+    cuadMontoTeorico.addEventListener("input", ()=> { updateCuadrePreview(); markDirty(); });
+    cuadMontoTeorico.addEventListener("blur", ()=> { formatInputMoney(cuadMontoTeorico); updateCuadrePreview(); markDirty(); });
+
+    voucherInventario.addEventListener("input", ()=> { updateVoucherSummary(); markDirty(); });
+    voucherInventario.addEventListener("blur", ()=> { formatInputMoney(voucherInventario); updateVoucherSummary(); markDirty(); });
+    voucherTotal.addEventListener("blur", ()=> { formatInputMoney(voucherTotal); markDirty(); });
+
     // Admin
     btnAdminCheques.addEventListener("click", ()=>{
       resetChequeForm();
@@ -2342,17 +3621,10 @@
     btnGuardarRemesa.addEventListener("click", guardarRemesa);
     btnGenerarPDF.addEventListener("click", generarImpresionPDF);
     btnNuevo.addEventListener("click", ()=>{
-      if(confirm("¿Crear nueva remesa? (Se perderán cambios no guardados)")){
-        remIdBolsa.value = "";
-        remMontoTeorico.value = "";
-        current = { cheques: [], efectivo: {} };
-        editingRemesaIndex = null;
-        editingChequeIndex = null;
-        efectivoDraft = {};
-        renderChequesTable();
-        updatePills();
-        markDirty();
-      }
+      if(!confirm("¿Borrar todos los datos de remesas guardadas? Esta acción no se puede deshacer.")) return;
+      localStorage.removeItem(REMESAS_KEY);
+      renderRemesasTable();
+      alert("Todas las remesas guardadas fueron eliminadas.");
     });
 
     /* =========================================================
@@ -2387,6 +3659,19 @@
 
       renderRemesasTable();
       updatePills();
+      cuadresList = loadCuadres();
+      recalculateCuadreDiferencias();
+      renderCuadresTable();
+      updateCuadrePreview();
+      updateCuadresSummary();
+
+      vouchersList = loadVouchers();
+      renderVouchersTable();
+      updateVoucherSummary();
+
+      boletasList = loadBoletas();
+      renderBoletasTable();
+      updateBoletasSummary();
 
       restoreDraftIfAny();
       const d = loadDraft();
